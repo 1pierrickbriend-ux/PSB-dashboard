@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pierrick Briend — Préparation Physique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root{
+  --v:#2E1F52;--vh:#241a40;--vs:#f3f0fa;--v100:#e4ddf2;--v700:#221638;
+  --ink:#131017;--inkm:#2a2630;--inkl:#6b6678;--inks:#9994a8;
+  --n0:#fff;--n50:#f6f8fa;--n100:#eef1f5;--n150:#e5e9ef;--n200:#d9dee6;
+  --n300:#bcc4d0;--n400:#939cab;--n500:#6b7482;--n700:#383f4a;--n900:#141921;
+  --green:#16a34a;--greens:#e7f7ee;
+  --amber:#e0a90b;--ambers:#fdf3d7;
+  --red:#e11d48;--reds:#fdeaef;
+  --orange:#f5631e;--oranges:#fff1eb;
+  --teal:#0f9d8a;--teals:#d6f5ef;
+  --blue:#2f6bf2;--blues:#e7f0ff;
+  --rose:#e11d6b;--roses:#ffe1ec;
+  --fd:'Sora',system-ui,sans-serif;
+  --fbebas:'Bebas Neue',system-ui,sans-serif;
+  --fb:'Hanken Grotesk',system-ui,sans-serif;
+  --fm:'JetBrains Mono',ui-monospace,monospace;
+  --rsm:6px;--rmd:8px;--rlg:10px;--rxl:14px;--r2xl:18px;--rpill:999px;
+  --sh-sm:0 1px 2px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
+  --sh-md:0 2px 4px rgba(0,0,0,.05),0 4px 12px rgba(0,0,0,.07);
+  --sh-lg:0 4px 8px rgba(0,0,0,.06),0 12px 28px rgba(0,0,0,.10);
+  --sh-xl:0 8px 16px rgba(0,0,0,.08),0 24px 48px rgba(0,0,0,.14);
+  --tr:all 160ms cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body,#root{margin:0;height:100%;width:100%}
+body{font-family:var(--fb);background:#fff;color:var(--n900);-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit}
+*::-webkit-scrollbar{width:7px;height:7px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:var(--n200);border-radius:99px;border:2px solid transparent;background-clip:content-box}
+*::-webkit-scrollbar-thumb:hover{background:var(--n300);background-clip:content-box}
+.slot:hover{background:var(--vs)!important;cursor:pointer}
+</style>
+</head>
+<body><div id="root"></div>
+<script type="text/babel">
+/* ── TYPES ── */
+const TYPES={
+  force:    {label:'Force',       color:'#7733dd',soft:'#f0e8ff'},
+  cardio:   {label:'Cardio',      color:'#f5631e',soft:'#fff1eb'},
+  recovery: {label:'Récupération',color:'#0f9d8a',soft:'#d6f5ef'},
+  mobility: {label:'Mobilité',    color:'#2f6bf2',soft:'#e7f0ff'},
+  technique:{label:'Technique',   color:'#e0a90b',soft:'#fdf3d7'},
+  power:    {label:'Puissance',   color:'#e11d6b',soft:'#ffe1ec'},
+};
+const LEVELS=['Débutant','Intermédiaire','Confirmé','Avancé','Elite'];
+const SPORTS=['Football','Rugby','Basketball','Handball','Tennis','Natation','Athlétisme','CrossFit','Trail','Triathlon','Cyclisme','Ski','Boxe','MMA','Judo','Powerlifting','Volley','Hockey','Autre'];
+const GOALS=['Performance compétitive','Remise en forme','Hypertrophie','Force maximale','Endurance','Mobilité & souplesse','Perte de poids','Réathlétisation','Préparation physique générale'];
+const DEFAULT_TARIFS=[
+  {id:'tA',label:'Séance individuelle',format:'Présentiel · 1h',prix:75,unite:'séance',color:'#7733dd',active:true},
+  {id:'tB',label:'Pack 10 séances',format:'Présentiel · 10x1h',prix:680,unite:'pack',color:'#0f9d8a',active:true},
+  {id:'tC',label:'Suivi mensuel complet',format:'Présentiel + suivi distance',prix:380,unite:'mois',color:'#2f6bf2',active:true},
+  {id:'tD',label:'Accompagnement online',format:'Programme + appels hebdo',prix:180,unite:'mois',color:'#f5631e',active:true},
+  {id:'tE',label:'Pack 5 séances',format:'Présentiel · 5x1h',prix:350,unite:'pack',color:'#e11d6b',active:true},
+];
+const OUTILS=[
+  {nom:'SumUp',cat:'Encaissement CB',desc:'Terminal CB mobile, idéal en présentiel ou déplacement.',tarif:'1,69% / transaction · Terminal 59 €',url:'https://sumup.fr'},
+  {nom:'Stripe',cat:'Paiements en ligne',desc:'Liens de paiement, abonnements, factures automatiques.',tarif:'1,5% + 0,25 € / transaction',url:'https://stripe.com'},
+  {nom:'Indy',cat:'Comptabilité',desc:'Comptabilité tout-en-un pour indépendants, déclarations auto.',tarif:'27 €/mois',url:'https://indy.fr'},
+  {nom:'Freebe',cat:'Facturation',desc:'Devis, factures et relances pour freelances.',tarif:'Gratuit (base)',url:'https://freebe.fr'},
+  {nom:'Dougs',cat:'Expert-comptable',desc:'Expert-comptable en ligne dédié indépendants.',tarif:'À partir de 49 €/mois',url:'https://dougs.fr'},
+];
+
+/* ── STORE ── */
+const LS='pb-prep-v2';
+function loadState(){try{const s=localStorage.getItem(LS);if(s){const p=JSON.parse(s);if(!p.tests)p.tests=[];return p;}}catch(e){}return{clients:[],sessions:[],paiements:[],tarifs:DEFAULT_TARIFS,tests:[],settings:{coachName:'Pierrick Briend',objectifMensuel:4600}};}
+function saveState(s){try{localStorage.setItem(LS,JSON.stringify(s));}catch(e){}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+const StoreCtx=React.createContext(null);
+function StoreProvider({children}){
+  const [state,setState]=React.useState(()=>loadState());
+  const update=React.useCallback(fn=>setState(s=>{const nx=fn(s);saveState(nx);return nx;}),[]);
+  const store=React.useMemo(()=>({
+    state,
+    addClient:c=>update(s=>({...s,clients:[...s.clients,{...c,id:uid(),createdAt:new Date().toISOString()}]})),
+    updateClient:(id,c)=>update(s=>({...s,clients:s.clients.map(x=>x.id===id?{...x,...c}:x)})),
+    deleteClient:id=>update(s=>({...s,clients:s.clients.filter(x=>x.id!==id)})),
+    addSession:sess=>update(s=>{
+      const sessId=uid();
+      const newSess={...sess,id:sessId,status:'upcoming',createdAt:new Date().toISOString()};
+      const parts=sess.participants||[];
+      const newPaiements=parts.filter(p=>p.clientId&&p.tarifId).map(p=>{
+        const tarif=s.tarifs.find(t=>t.id===p.tarifId);
+        return{id:uid(),clientId:p.clientId,tarifId:p.tarifId,tarifLabel:tarif?.label||'',montant:Number(tarif?.prix||0),date:sess.date||new Date().toISOString().slice(0,10),statut:'en attente',mode:'À définir',sessionId:sessId};
+      });
+      return{...s,sessions:[...s.sessions,newSess],paiements:[...s.paiements,...newPaiements]};
+    }),
+    updateSession:(id,sess)=>update(s=>({...s,sessions:s.sessions.map(x=>x.id===id?{...x,...sess}:x)})),
+    deleteSession:id=>update(s=>({...s,sessions:s.sessions.filter(x=>x.id!==id)})),
+    addPaiement:p=>update(s=>({...s,paiements:[...s.paiements,{...p,id:uid()}]})),
+    updatePaiement:(id,p)=>update(s=>({...s,paiements:s.paiements.map(x=>x.id===id?{...x,...p}:x)})),
+    updateTarif:(id,t)=>update(s=>({...s,tarifs:s.tarifs.map(x=>x.id===id?{...x,...t}:x)})),
+    addTarif:t=>update(s=>({...s,tarifs:[...s.tarifs,{...t,id:uid()}]})),
+    deleteTarif:id=>update(s=>({...s,tarifs:s.tarifs.filter(x=>x.id!==id)})),
+    updateSettings:settings=>update(s=>({...s,settings:{...s.settings,...settings}})),
+    addTest:t=>update(s=>({...s,tests:[...(s.tests||[]),{...t,id:uid(),createdAt:new Date().toISOString()}]})),
+    deleteTest:id=>update(s=>({...s,tests:(s.tests||[]).filter(x=>x.id!==id)})),
+  }),[state,update]);
+  return <StoreCtx.Provider value={store}>{children}</StoreCtx.Provider>;
+}
+function useStore(){return React.useContext(StoreCtx);}
+
+/* ── ATOMS ── */
+function Icon({n,s=16,c='currentColor',style={}}){
+  const ref=React.useRef(null);
+  React.useEffect(()=>{
+    if(!ref.current||!window.lucide?.icons)return;
+    const key=n.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join('');
+    const def=window.lucide.icons[key];if(!def)return;
+    const el=window.lucide.createElement(def);
+    el.setAttribute('width',s);el.setAttribute('height',s);el.setAttribute('stroke-width',2);
+    ref.current.innerHTML='';ref.current.appendChild(el);
+  },[n,s]);
+  return <span ref={ref} style={{display:'inline-flex',width:s,height:s,color:c,flexShrink:0,...style}}/>;
+}
+
+const PAL=['#7733dd','#0f9d8a','#2f6bf2','#f5631e','#e11d6b','#e0a90b'];
+const PALS=['#f5f1ff','#d6f5ef','#e7f0ff','#fff1eb','#ffe1ec','#fdf3d7'];
+function Avatar({name='',size=40,status,style={}}){
+  const i=(name.charCodeAt(0)||0)%PAL.length;
+  const ini=name.trim().split(/\s+/).map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';
+  const sc={online:'#16a34a',away:'#e0a90b',offline:'#939cab'};
+  return(
+    <span style={{position:'relative',display:'inline-flex',flexShrink:0,...style}}>
+      <span style={{width:size,height:size,borderRadius:'50%',background:PALS[i],color:PAL[i],display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--fd)',fontWeight:700,fontSize:size*.38,letterSpacing:'-.02em'}}>{ini}</span>
+      {status&&<span style={{position:'absolute',bottom:0,right:0,width:Math.max(8,size*.26),height:Math.max(8,size*.26),borderRadius:'50%',background:sc[status]||sc.offline,border:'2px solid #fff'}}/>}
+    </span>
+  );
+}
+
+function Btn({onClick,variant='primary',size='md',icon,iconR,disabled,children,style={},full,type='button'}){
+  const h=size==='sm'?32:size==='lg'?44:38;
+  const px=size==='sm'?'0 12px':size==='lg'?'0 20px':'0 16px';
+  const fs=size==='sm'?12.5:size==='lg'?15:13.5;
+  const VS={
+    primary:{background:'var(--v)',color:'#fff',border:'none',boxShadow:'0 1px 2px rgba(84,58,134,.3),0 2px 8px rgba(84,58,134,.18)'},
+    secondary:{background:'#fff',color:'var(--n900)',border:'1px solid var(--n200)',boxShadow:'var(--sh-sm)'},
+    ghost:{background:'transparent',color:'var(--n500)',border:'none',boxShadow:'none'},
+    danger:{background:'var(--red)',color:'#fff',border:'none',boxShadow:'none'},
+    ink:{background:'var(--ink)',color:'#fff',border:'none',boxShadow:'0 2px 10px rgba(0,0,0,.25)'},
+  };
+  const v=VS[variant]||VS.primary;
+  return(
+    <button type={type} onClick={onClick} disabled={disabled} style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:7,height:h,padding:px,fontSize:fs,fontWeight:600,fontFamily:'var(--fb)',letterSpacing:'-.01em',borderRadius:'var(--rmd)',cursor:disabled?'not-allowed':'pointer',opacity:disabled?.5:1,whiteSpace:'nowrap',width:full?'100%':'auto',transition:'var(--tr)',...v,...style}}>
+      {icon&&<Icon n={icon} s={size==='sm'?14:16} c="currentColor"/>}
+      {children}
+      {iconR&&<Icon n={iconR} s={size==='sm'?14:16} c="currentColor"/>}
+    </button>
+  );
+}
+
+function Tag({type}){
+  const t=TYPES[type]||TYPES.force;
+  return <span style={{display:'inline-flex',alignItems:'center',padding:'2px 8px 2px 6px',background:t.soft,borderLeft:`2.5px solid ${t.color}`,borderRadius:4,fontSize:11,fontWeight:600,color:t.color,whiteSpace:'nowrap'}}>{t.label}</span>;
+}
+
+function Kpi({label,val,unit,delta,up=true,accent='var(--v)',icon}){
+  return(
+    <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:'14px 16px',display:'flex',flexDirection:'column',gap:8,boxShadow:'var(--sh-sm)'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <span style={{fontSize:10.5,fontWeight:700,letterSpacing:'.07em',textTransform:'uppercase',color:'var(--n400)'}}>{label}</span>
+        {icon&&<span style={{width:26,height:26,borderRadius:7,background:accent+'18',display:'flex',alignItems:'center',justifyContent:'center'}}><Icon n={icon} s={14} c={accent}/></span>}
+      </div>
+      <div style={{display:'flex',alignItems:'baseline',gap:4,whiteSpace:'nowrap'}}>
+        <span style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:24,color:'var(--n900)',letterSpacing:'-.02em',lineHeight:1}}>{val}</span>
+        {unit&&<span style={{fontSize:11.5,color:'var(--n400)',fontFamily:'var(--fm)'}}>{unit}</span>}
+      </div>
+      {delta&&<span style={{fontSize:10.5,fontWeight:600,color:up?'var(--green)':'var(--orange)'}}>{delta}</span>}
+    </div>
+  );
+}
+
+function Empty({icon,title,sub,action}){
+  return(
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'60px 24px',gap:12,textAlign:'center'}}>
+      <div style={{width:56,height:56,borderRadius:'var(--rxl)',background:'var(--vs)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <Icon n={icon} s={26} c="var(--v)"/>
+      </div>
+      <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:17,color:'var(--n900)',letterSpacing:'-.015em'}}>{title}</div>
+      {sub&&<div style={{fontSize:13.5,color:'var(--n500)',maxWidth:340,lineHeight:1.55}}>{sub}</div>}
+      {action&&<div style={{marginTop:8}}>{action}</div>}
+    </div>
+  );
+}
+
+function Modal({open,onClose,title,subtitle,footer,children,width=500}){
+  React.useEffect(()=>{if(!open)return;const fn=e=>{if(e.key==='Escape')onClose?.();};window.addEventListener('keydown',fn);return()=>window.removeEventListener('keydown',fn);},[open,onClose]);
+  if(!open)return null;
+  return(
+    <div onClick={onClose} style={{position:'fixed',inset:0,zIndex:1000,background:'rgba(19,16,23,.5)',backdropFilter:'blur(3px)',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
+      <div onClick={e=>e.stopPropagation()} style={{width,maxWidth:'100%',maxHeight:'90vh',background:'#fff',borderRadius:'var(--r2xl)',boxShadow:'var(--sh-xl)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12,padding:'20px 22px 14px',borderBottom:'1px solid var(--n150)'}}>
+          <div>
+            <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:19,color:'var(--n900)',letterSpacing:'-.015em'}}>{title}</div>
+            {subtitle&&<div style={{fontSize:13,color:'var(--n500)',marginTop:2}}>{subtitle}</div>}
+          </div>
+          <button onClick={onClose} style={{display:'flex',width:32,height:32,alignItems:'center',justifyContent:'center',border:'none',background:'transparent',borderRadius:'var(--rmd)',color:'var(--n400)'}}><Icon n="x" s={18} c="var(--n400)"/></button>
+        </div>
+        <div style={{overflowY:'auto',padding:'18px 22px',flex:1}}>{children}</div>
+        {footer&&<div style={{display:'flex',justifyContent:'flex-end',gap:10,padding:'14px 22px',borderTop:'1px solid var(--n150)',background:'var(--n50)'}}>{footer}</div>}
+      </div>
+    </div>
+  );
+}
+
+function Field({label,children,hint,error}){
+  return(
+    <div style={{display:'flex',flexDirection:'column',gap:5}}>
+      {label&&<label style={{fontSize:13,fontWeight:600,color:'var(--n900)'}}>{label}</label>}
+      {children}
+      {hint&&<span style={{fontSize:11.5,color:'var(--n500)'}}>{hint}</span>}
+      {error&&<span style={{fontSize:11.5,color:'var(--red)'}}>{error}</span>}
+    </div>
+  );
+}
+
+function FInput({value,onChange,placeholder,type='text',style={}}){
+  return(
+    <input type={type} value={value} onChange={onChange} placeholder={placeholder} style={{height:38,padding:'0 12px',border:'1px solid var(--n200)',borderRadius:'var(--rmd)',fontSize:14,color:'var(--n900)',background:'#fff',outline:'none',width:'100%',transition:'var(--tr)',...style}}
+      onFocus={e=>{e.target.style.borderColor='var(--v)';e.target.style.boxShadow='0 0 0 3px rgba(84,58,134,.18)';}}
+      onBlur={e=>{e.target.style.borderColor='var(--n200)';e.target.style.boxShadow='none';}}/>
+  );
+}
+
+function FSel({value,onChange,children,style={}}){
+  return(
+    <div style={{position:'relative',...style}}>
+      <select value={value} onChange={onChange} style={{height:38,padding:'0 32px 0 12px',border:'1px solid var(--n200)',borderRadius:'var(--rmd)',fontSize:14,color:'var(--n900)',background:'#fff',outline:'none',width:'100%',appearance:'none',cursor:'pointer'}}>{children}</select>
+      <Icon n="chevron-down" s={14} c="var(--n400)" style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}}/>
+    </div>
+  );
+}
+
+/* ── SHELL ── */
+const NAV=[
+  {key:'home',label:'Accueil',icon:'layout-dashboard'},
+  {key:'calendar',label:'Calendrier',icon:'calendar-days'},
+  {key:'clients',label:'Athlètes',icon:'users'},
+  {key:'performance',label:'Performance',icon:'activity'},
+  {key:'finances',label:'Finances',icon:'banknote'},
+  {key:'programs',label:'Programmes',icon:'clipboard-list'},
+];
+
+function ExportReminder({dataCount}){
+  const [tick,setTick]=React.useState(0);
+  React.useEffect(()=>{
+    const fn=()=>setTick(t=>t+1);
+    window.addEventListener('pb-exported',fn);
+    return()=>window.removeEventListener('pb-exported',fn);
+  },[]);
+  if(dataCount===0) return null;
+  const last=Number(localStorage.getItem('pb-last-export')||0);
+  const days=last?Math.floor((Date.now()-last)/86400000):null;
+  if(last&&days<7) return null; // exporté récemment : pas de rappel
+  return(
+    <div style={{display:'flex',alignItems:'center',gap:12,padding:'11px 16px',marginBottom:18,background:'var(--ambers)',border:'1px solid #f0d98a',borderRadius:'var(--rlg)'}}>
+      <Icon n="shield-alert" s={18} c="var(--amber)"/>
+      <div style={{flex:1,fontSize:13,color:'var(--n700)',lineHeight:1.45}}>
+        <strong style={{color:'var(--n900)'}}>Sauvegardez vos données.</strong> {last?`Dernière sauvegarde il y a ${days} jour${days>1?'s':''}.`:'Vous n\'avez jamais exporté.'} Vos données vivent dans ce navigateur — exportez régulièrement (bouton « Export JSON » en bas à gauche) pour ne rien perdre.
+      </div>
+    </div>
+  );
+}
+
+function Shell({screen,setScreen,onNewSession,children}){
+  const {state}=useStore();
+  const today=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const todayStr=new Date().toISOString().slice(0,10);
+  const todaySessions=state.sessions.filter(s=>s.date===todayStr);
+  const META={home:'Tableau de bord',calendar:'Calendrier',clients:'Athlètes',performance:'Performance',finances:'Finances',programs:'Programmes'};
+  return(
+    <div style={{display:'flex',height:'100%'}}>
+      <aside style={{width:248,flexShrink:0,background:'var(--ink)',display:'flex',flexDirection:'column',padding:'18px 14px',height:'100%',boxSizing:'border-box'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,padding:'4px 8px 20px'}}>
+          <div style={{width:36,height:36,borderRadius:9,background:'var(--v)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:'0 2px 8px rgba(84,58,134,.4)'}}>
+            <span style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:15,color:'#fff',letterSpacing:'-.06em'}}>PSB</span>
+          </div>
+          <div>
+            <div style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:13.5,color:'#fff',letterSpacing:'-.02em'}}>Pierrick Briend</div>
+            <div style={{fontSize:10.5,color:'var(--inkl)',letterSpacing:'.04em'}}>Préparation physique</div>
+          </div>
+        </div>
+        <button onClick={onNewSession} style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,width:'100%',height:38,border:'none',borderRadius:'var(--rmd)',background:'var(--v)',color:'#fff',fontFamily:'var(--fb)',fontSize:13.5,fontWeight:600,boxShadow:'0 2px 10px rgba(84,58,134,.45)',marginBottom:18,cursor:'pointer'}}>
+          <Icon n="plus" s={16} c="#fff"/> Nouvelle séance
+        </button>
+        <nav style={{display:'flex',flexDirection:'column',gap:2}}>
+          {NAV.map(item=>{
+            const on=screen===item.key;
+            return(
+              <button key={item.key} onClick={()=>setScreen(item.key)} style={{display:'flex',alignItems:'center',gap:11,padding:'9px 11px',border:'none',borderRadius:'var(--rmd)',cursor:'pointer',textAlign:'left',width:'100%',background:on?'rgba(84,58,134,.22)':'transparent',color:on?'#e8d8ff':'var(--inks)',fontFamily:'var(--fb)',fontSize:14,fontWeight:on?600:500,transition:'var(--tr)'}}>
+                <Icon n={item.icon} s={18} c={on?'var(--v)':'var(--inkl)'}/>
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+        <div style={{marginTop:14,padding:'12px 14px',background:'rgba(255,255,255,.06)',border:'1px solid rgba(255,255,255,.07)',borderRadius:'var(--rlg)'}}>
+          <div style={{fontSize:11,fontWeight:600,color:'var(--inks)',marginBottom:4}}>Aujourd'hui</div>
+          <div style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:22,color:'#fff',lineHeight:1.1}}>
+            {todaySessions.length} <span style={{fontSize:12,color:'var(--inkl)',fontWeight:400,fontFamily:'var(--fb)'}}>séance{todaySessions.length!==1?'s':''}</span>
+          </div>
+          {state.clients.length>0&&<div style={{fontSize:11.5,color:'var(--inkl)',marginTop:4}}>{state.clients.length} athlète{state.clients.length!==1?'s':''} suivi{state.clients.length!==1?'s':''}</div>}
+        </div>
+        <div style={{marginTop:'auto',display:'flex',flexDirection:'column',gap:8,padding:'10px 6px 0'}}>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <Avatar name="Pierrick Briend" size={32} status="online"/>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:13,fontWeight:600,color:'#e8e4f2',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>Pierrick Briend</div>
+              <div style={{fontSize:11,color:'var(--inkl)'}}>Coach</div>
+            </div>
+            <button style={{border:'none',background:'transparent',padding:4,borderRadius:'var(--rsm)'}}><Icon n="settings" s={16} c="var(--inkl)"/></button>
+          </div>
+          <div style={{display:'flex',gap:6}}>
+            <button title="Exporter les données" onClick={()=>{
+              const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+              const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+              a.download=`pb-prep-${new Date().toISOString().slice(0,10)}.json`;a.click();
+              localStorage.setItem('pb-last-export',Date.now().toString());
+              window.dispatchEvent(new Event('pb-exported'));
+            }} style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',gap:6,height:30,border:'1px solid rgba(255,255,255,.1)',borderRadius:'var(--rmd)',background:'transparent',cursor:'pointer',color:'var(--inks)',fontSize:11.5,fontWeight:600,fontFamily:'var(--fb)'}}>
+              <Icon n="download" s={13} c="var(--inks)"/>Export JSON
+            </button>
+            <label title="Importer des données" style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',gap:6,height:30,border:'1px solid rgba(255,255,255,.1)',borderRadius:'var(--rmd)',cursor:'pointer',color:'var(--inks)',fontSize:11.5,fontWeight:600,fontFamily:'var(--fb)'}}>
+              <Icon n="upload" s={13} c="var(--inks)"/>Import
+              <input type="file" accept=".json" style={{display:'none'}} onChange={e=>{
+                const file=e.target.files[0];if(!file)return;
+                const reader=new FileReader();
+                reader.onload=ev=>{
+                  try{
+                    const data=JSON.parse(ev.target.result);
+                    if(confirm('Remplacer toutes vos données par ce fichier ?')){
+                      localStorage.setItem('pb-prep-v2',JSON.stringify(data));
+                      window.location.reload();
+                    }
+                  }catch{alert('Fichier invalide.');}
+                };
+                reader.readAsText(file);
+                e.target.value='';
+              }}/>
+            </label>
+          </div>
+        </div>
+      </aside>
+      <div style={{flex:1,display:'flex',flexDirection:'column',minWidth:0}}>
+        <header style={{height:60,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 26px',borderBottom:'1px solid var(--n150)',background:'#fff'}}>
+          <div>
+            <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:18,color:'var(--n900)',letterSpacing:'-.015em'}}>{META[screen]}</div>
+            <div style={{fontSize:12,color:'var(--n400)',marginTop:1,textTransform:'capitalize'}}>{today}</div>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <div style={{height:36,width:200,border:'1px solid var(--n200)',borderRadius:'var(--rmd)',background:'var(--n50)',display:'flex',alignItems:'center',padding:'0 10px',gap:7}}>
+              <Icon n="search" s={14} c="var(--n400)"/>
+              <span style={{fontSize:13,color:'var(--n400)'}}>Rechercher…</span>
+            </div>
+          </div>
+        </header>
+        <main style={{flex:1,overflowY:'auto',padding:'24px 26px',background:'#fff'}}>
+          <ExportReminder dataCount={state.clients.length+state.sessions.length}/>
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+/* ── SPARKLINE 7 JOURS ── */
+function Sparkline({sessions,clientId}){
+  const days=Array.from({length:7},(_,i)=>{
+    const d=new Date();d.setDate(d.getDate()-6+i);
+    return d.toISOString().slice(0,10);
+  });
+  const counts=days.map(d=>sessions.filter(s=>{
+    const parts=s.participants||[];
+    const match=parts.some(p=>p.clientId===clientId)||s.clientId===clientId;
+    return match&&s.date===d;
+  }).length);
+  const max=Math.max(...counts,1);
+  const LABELS=['L','M','M','J','V','S','D'];
+  const today=new Date().toISOString().slice(0,10);
+  return(
+    <div style={{display:'flex',alignItems:'flex-end',gap:3,height:28}}>
+      {days.map((d,i)=>{
+        const h=Math.max(3,(counts[i]/max)*22);
+        const isT=d===today;
+        return(
+          <div key={i} title={`${d} : ${counts[i]} séance${counts[i]>1?'s':''}`} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:2,flex:1}}>
+            <div style={{width:'100%',maxWidth:14,height:h,borderRadius:3,background:counts[i]>0?'var(--v)':'var(--n150)',opacity:isT?1:.7,transition:'height .3s'}}/>
+            <span style={{fontSize:8,color:isT?'var(--v)':'var(--n400)',fontFamily:'var(--fm)',fontWeight:isT?700:400}}>{LABELS[i]}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+
+function ClientModal({open,onClose,editClient}){
+  const {addClient,updateClient}=useStore();
+  const [f,setF]=React.useState({name:'',sport:'',level:'Débutant',goal:'',phone:'',email:'',notes:''});
+  React.useEffect(()=>{
+    if(editClient) setF({name:editClient.name||'',sport:editClient.sport||'',level:editClient.level||'Débutant',goal:editClient.goal||'',phone:editClient.phone||'',email:editClient.email||'',notes:editClient.notes||''});
+    else setF({name:'',sport:'',level:'Débutant',goal:'',phone:'',email:'',notes:''});
+  },[editClient,open]);
+  const set=(k,v)=>setF(p=>({...p,[k]:v}));
+  const ok=f.name.trim().length>1;
+  const submit=()=>{ if(!ok)return; if(editClient) updateClient(editClient.id,f); else addClient(f); onClose(); };
+  return(
+    <Modal open={open} onClose={onClose} title={editClient?'Modifier l\'athlète':'Ajouter un athlète'} width={520}
+      footer={<><Btn variant="ghost" onClick={onClose}>Annuler</Btn><Btn onClick={submit} disabled={!ok}>{editClient?'Enregistrer':'Ajouter'}</Btn></>}>
+      <div style={{display:'flex',flexDirection:'column',gap:14}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <Field label="Nom complet *"><FInput value={f.name} onChange={e=>set('name',e.target.value)} placeholder="Prénom Nom"/></Field>
+          <Field label="Sport / Discipline">
+            <FSel value={f.sport} onChange={e=>set('sport',e.target.value)}>
+              <option value="">— Choisir —</option>
+              {SPORTS.map(s=><option key={s} value={s}>{s}</option>)}
+            </FSel>
+          </Field>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <Field label="Niveau">
+            <FSel value={f.level} onChange={e=>set('level',e.target.value)}>{LEVELS.map(l=><option key={l} value={l}>{l}</option>)}</FSel>
+          </Field>
+          <Field label="Objectif">
+            <FSel value={f.goal} onChange={e=>set('goal',e.target.value)}>
+              <option value="">— Choisir —</option>
+              {GOALS.map(g=><option key={g} value={g}>{g}</option>)}
+            </FSel>
+          </Field>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <Field label="Téléphone"><FInput value={f.phone} onChange={e=>set('phone',e.target.value)} placeholder="+33 6 XX XX XX XX" type="tel"/></Field>
+          <Field label="Email"><FInput value={f.email} onChange={e=>set('email',e.target.value)} placeholder="email@exemple.fr" type="email"/></Field>
+        </div>
+        <Field label="Notes / Antécédents">
+          <textarea value={f.notes} onChange={e=>set('notes',e.target.value)} placeholder="Blessures, contraintes, objectifs spécifiques…" rows={3} style={{padding:'8px 12px',border:'1px solid var(--n200)',borderRadius:'var(--rmd)',fontSize:13.5,resize:'vertical',fontFamily:'var(--fb)',outline:'none',lineHeight:1.5,width:'100%'}}/>
+        </Field>
+      </div>
+    </Modal>
+  );
+}
+
+/* ── MODAL SÉANCE ── */
+function SessionModal({open,onClose,prefill}){
+  const {state,addSession,updateSession}=useStore();
+  const TODAY=new Date().toISOString().slice(0,10);
+  const empty={participants:[],date:TODAY,startH:9,durH:1,type:'force',title:'',notes:''};
+  const [f,setF]=React.useState(empty);
+  React.useEffect(()=>{
+    if(prefill){
+      const parts=prefill.participants||(prefill.clientId?[{clientId:prefill.clientId,tarifId:''}]:[]);
+      setF({participants:parts,date:prefill.date||TODAY,startH:prefill.startH||9,durH:prefill.durH||1,type:prefill.type||'force',title:prefill.title||'',notes:prefill.notes||'',id:prefill.id});
+    } else setF(empty);
+  },[open]);
+  const set=(k,v)=>setF(p=>({...p,[k]:v}));
+  const isEdit=!!f.id;
+  const addParticipant=()=>setF(p=>({...p,participants:[...p.participants,{clientId:'',tarifId:''}]}));
+  const setP=(i,k,v)=>setF(p=>{const parts=[...p.participants];parts[i]={...parts[i],[k]:v};return{...p,participants:parts};});
+  const removeP=(i)=>setF(p=>({...p,participants:p.participants.filter((_,j)=>j!==i)}));
+  const usedClients=f.participants.map(p=>p.clientId).filter(Boolean);
+  const totalProjeté=f.participants.reduce((acc,p)=>{
+    if(!p.tarifId)return acc;
+    const t=state.tarifs.find(x=>x.id===p.tarifId);
+    return acc+Number(t?.prix||0);
+  },0);
+  const fmt=n=>new Intl.NumberFormat('fr-FR').format(n)+'\u00a0€';
+  const submit=()=>{
+    if(!f.date)return;
+    if(isEdit) updateSession(f.id,f);
+    else addSession(f);
+    onClose();
+  };
+  const HOURS=Array.from({length:16},(_,i)=>i+6);
+  const DURS=[0.5,0.75,1,1.25,1.5,2,2.5,3];
+  const activeTarifs=state.tarifs.filter(t=>t.active);
+  return(
+    <Modal open={open} onClose={onClose} title={isEdit?'Modifier la séance':'Nouvelle séance'}
+      subtitle={f.date?new Date(f.date+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}):''}
+      width={540} footer={
+        <div style={{display:'flex',alignItems:'center',width:'100%',gap:10}}>
+          {f.participants.length>0&&totalProjeté>0&&(
+            <span style={{fontSize:12.5,color:'var(--n500)',fontFamily:'var(--fm)'}}>
+              {f.participants.length} athlète{f.participants.length>1?'s':''} · <strong style={{color:'var(--v)'}}>{fmt(totalProjeté)}</strong> en attente
+            </span>
+          )}
+          <div style={{flex:1}}/>
+          <Btn variant="ghost" onClick={onClose}>Annuler</Btn>
+          <Btn onClick={submit}>{isEdit?'Enregistrer':'Créer la séance'}</Btn>
+        </div>
+      }>
+      <div style={{display:'flex',flexDirection:'column',gap:14}}>
+        <Field label="Type de séance">
+          <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
+            {Object.entries(TYPES).map(([k,t])=>(
+              <button key={k} onClick={()=>set('type',k)} style={{padding:'4px 10px',border:'none',borderRadius:'var(--rsm)',fontSize:12,fontWeight:600,background:f.type===k?t.color:t.soft,color:f.type===k?'#fff':t.color,transition:'var(--tr)',cursor:'pointer'}}>{t.label}</button>
+            ))}
+          </div>
+        </Field>
+        <Field label="Titre"><FInput value={f.title} onChange={e=>set('title',e.target.value)} placeholder={`ex : ${(TYPES[f.type]||TYPES.force).label} — Bas du corps`}/></Field>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
+          <Field label="Date"><FInput type="date" value={f.date} onChange={e=>set('date',e.target.value)}/></Field>
+          <Field label="Heure">
+            <FSel value={String(f.startH)} onChange={e=>set('startH',Number(e.target.value))}>
+              {HOURS.map(h=><option key={h} value={String(h)}>{String(h).padStart(2,'0')}:00</option>)}
+            </FSel>
+          </Field>
+          <Field label="Durée">
+            <FSel value={String(f.durH)} onChange={e=>set('durH',Number(e.target.value))}>
+              {DURS.map(d=><option key={d} value={String(d)}>{d<1?d*60+' min':d+'h'}</option>)}
+            </FSel>
+          </Field>
+        </div>
+        <div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+            <label style={{fontSize:13,fontWeight:600,color:'var(--n900)'}}>Athlètes & tarifs</label>
+            <Btn size="sm" variant="ghost" onClick={addParticipant} icon="user-plus">Ajouter un athlète</Btn>
+          </div>
+          {f.participants.length===0&&(
+            <div onClick={addParticipant} style={{border:'1.5px dashed var(--n200)',borderRadius:'var(--rlg)',padding:'12px 16px',textAlign:'center',cursor:'pointer',color:'var(--n400)',fontSize:13,transition:'var(--tr)'}}>Cliquer pour ajouter un athlète</div>
+          )}
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            {f.participants.map((p,i)=>{
+              const cl=state.clients.find(c=>c.id===p.clientId);
+              const availClients=state.clients.filter(c=>!usedClients.includes(c.id)||c.id===p.clientId);
+              const tarif=state.tarifs.find(t=>t.id===p.tarifId);
+              return(
+                <div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'10px 12px',background:'var(--n50)',borderRadius:'var(--rlg)',border:'1px solid var(--n150)'}}>
+                  {cl&&<Avatar name={cl.name} size={32} style={{flexShrink:0}}/>}
+                  <FSel value={p.clientId} onChange={e=>setP(i,'clientId',e.target.value)} style={{flex:1}}>
+                    <option value="">— Athlète —</option>
+                    {availClients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
+                  </FSel>
+                  <FSel value={p.tarifId} onChange={e=>setP(i,'tarifId',e.target.value)} style={{flex:1}}>
+                    <option value="">— Tarif (optionnel) —</option>
+                    {activeTarifs.map(t=><option key={t.id} value={t.id}>{t.label} — {new Intl.NumberFormat('fr-FR').format(t.prix)} €</option>)}
+                  </FSel>
+                  {tarif&&<span style={{fontFamily:'var(--fm)',fontSize:13,fontWeight:700,color:'var(--v)',whiteSpace:'nowrap',flexShrink:0}}>{new Intl.NumberFormat('fr-FR').format(tarif.prix)} €</span>}
+                  <button onClick={()=>removeP(i)} style={{border:'none',background:'transparent',padding:4,cursor:'pointer',color:'var(--n300)',flexShrink:0,borderRadius:'var(--rsm)'}}><Icon n="x" s={15} c="var(--n300)"/></button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <Field label="Notes / Exercices">
+          <textarea value={f.notes} onChange={e=>set('notes',e.target.value)} placeholder="Exercices, consignes, intensité…" rows={3} style={{padding:'8px 12px',border:'1px solid var(--n200)',borderRadius:'var(--rmd)',fontSize:13.5,resize:'vertical',fontFamily:'var(--fb)',outline:'none',lineHeight:1.5,width:'100%'}}/>
+        </Field>
+      </div>
+    </Modal>
+  );
+}
+
+/* ── ACCUEIL ── */
+function HomeScreen({onNewClient,onNewSession}){
+  const {state}=useStore();
+  const TODAY=new Date().toISOString().slice(0,10);
+  const todaySessions=state.sessions.filter(s=>s.date===TODAY);
+  const upcoming=[...state.sessions].filter(s=>s.date>=TODAY&&s.status!=='done').sort((a,b)=>a.date.localeCompare(b.date)||a.startH-b.startH).slice(0,5);
+  const doneSessions=state.sessions.filter(s=>s.status==='done').length;
+  if(state.clients.length===0&&state.sessions.length===0){
+    return(
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'70vh'}}>
+        <div style={{textAlign:'center',maxWidth:500}}>
+          <div style={{width:72,height:72,borderRadius:20,background:'var(--vs)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 20px'}}><Icon n="dumbbell" s={34} c="var(--v)"/></div>
+          <div style={{fontFamily:'var(--fbebas)',fontWeight:800,fontSize:28,color:'var(--n900)',letterSpacing:'-.025em',marginBottom:10}}>Bienvenue sur votre espace</div>
+          <div style={{fontSize:15.5,color:'var(--n500)',lineHeight:1.6,marginBottom:28}}>Commencez par ajouter vos athlètes, puis planifiez leurs séances. Toutes vos données sont sauvegardées automatiquement dans ce navigateur.</div>
+          <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
+            <Btn onClick={onNewClient} icon="user-plus" size="lg">Ajouter un athlète</Btn>
+            <Btn variant="secondary" onClick={()=>onNewSession()} icon="calendar-plus" size="lg">Créer une séance</Btn>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return(
+    <div style={{display:'flex',flexDirection:'column',gap:20,maxWidth:1280}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
+        <Kpi label="Athlètes suivis" val={state.clients.length} icon="users" accent="var(--v)"/>
+        <Kpi label="Séances planifiées" val={state.sessions.length-doneSessions} icon="calendar-clock" accent="var(--blue)"/>
+        <Kpi label="Séances réalisées" val={doneSessions} icon="check-circle" accent="var(--teal)"/>
+        <Kpi label="Aujourd'hui" val={todaySessions.length} unit="séance(s)" icon="sun" accent="var(--amber)"/>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'1.6fr 1fr',gap:16}}>
+        <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',boxShadow:'var(--sh-sm)',overflow:'hidden'}}>
+          <div style={{padding:'16px 18px',borderBottom:'1px solid var(--n100)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+            <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:15,color:'var(--n900)'}}>Prochaines séances</div>
+            <Btn size="sm" variant="ghost" onClick={()=>onNewSession()} icon="plus">Créer</Btn>
+          </div>
+          {upcoming.length===0
+            ?<Empty icon="calendar-days" title="Aucune séance à venir" sub="Créez une séance pour démarrer." action={<Btn onClick={()=>onNewSession()} icon="plus">Nouvelle séance</Btn>}/>
+            :<div>{upcoming.map((s,i)=>{
+              const c=state.clients.find(x=>x.id===s.clientId);
+              const t=TYPES[s.type]||TYPES.force;
+              return(
+                <div key={s.id} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 18px',borderBottom:i<upcoming.length-1?'1px solid var(--n50)':'none'}}>
+                  <div style={{fontFamily:'var(--fm)',fontSize:12,color:'var(--n900)',width:90,flexShrink:0}}>
+                    {new Date(s.date+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}
+                    <br/><span style={{color:'var(--n400)',fontWeight:400}}>{String(s.startH).padStart(2,'0')}:00</span>
+                  </div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:14,fontWeight:600,color:'var(--n900)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{s.title||t.label}</div>
+                    {c&&<div style={{display:'flex',alignItems:'center',gap:6,marginTop:3}}><Avatar name={c.name} size={18}/><span style={{fontSize:12,color:'var(--n500)'}}>{c.name}</span></div>}
+                  </div>
+                  <Tag type={s.type}/>
+                </div>
+              );
+            })}</div>
+          }
+        </div>
+        <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',boxShadow:'var(--sh-sm)',overflow:'hidden'}}>
+          <div style={{padding:'16px 18px',borderBottom:'1px solid var(--n100)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+            <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:15,color:'var(--n900)'}}>Athlètes</div>
+            <Btn size="sm" variant="ghost" onClick={onNewClient} icon="plus">Ajouter</Btn>
+          </div>
+          {state.clients.length===0
+            ?<Empty icon="users" title="Aucun athlète" sub="Ajoutez vos athlètes pour démarrer." action={<Btn size="sm" onClick={onNewClient} icon="user-plus">Ajouter</Btn>}/>
+            :<div>{state.clients.slice(0,6).map((c,i)=>(
+              <div key={c.id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 18px',borderBottom:i<Math.min(6,state.clients.length)-1?'1px solid var(--n50)':'none'}}>
+                <Avatar name={c.name} size={36} status="online"/>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13.5,fontWeight:600,color:'var(--n900)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.name}</div>
+                  <div style={{fontSize:11.5,color:'var(--n500)'}}>{c.sport||'—'} · {c.level}</div>
+                </div>
+                <span style={{fontFamily:'var(--fm)',fontSize:11.5,fontWeight:600,color:'var(--n400)',background:'var(--n50)',borderRadius:'var(--rpill)',padding:'2px 9px',border:'1px solid var(--n150)',whiteSpace:'nowrap'}}>
+                  {state.sessions.filter(s=>s.clientId===c.id).length} séance(s)
+                </span>
+              </div>
+            ))}</div>
+          }
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── CALENDRIER ── */
+function CalendarScreen({onNewSession}){
+  const {state,updateSession,deleteSession}=useStore();
+  const [weekOffset,setWeekOffset]=React.useState(0);
+  const [selected,setSelected]=React.useState(null);
+  const [dragId,setDragId]=React.useState(null);
+  const [completing,setCompleting]=React.useState(false);
+  const [fb,setFb]=React.useState({rpe:7,fatigue:3,sommeil:3,douleur:1});
+  React.useEffect(()=>{ if(selected){ setFb({rpe:selected.rpe||7,fatigue:selected.wellness?.fatigue||3,sommeil:selected.wellness?.sommeil||3,douleur:selected.wellness?.douleur||1}); setCompleting(false);} },[selected]);
+  const getWeek=offset=>{
+    const now=new Date();const day=now.getDay()||7;
+    const mon=new Date(now);mon.setDate(now.getDate()-day+1+offset*7);
+    return Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d;});
+  };
+  const week=getWeek(weekOffset);
+  const TODAY=new Date().toISOString().slice(0,10);
+  const ROW=52,HS=7,HC=15;
+  const weekLabel=`${week[0].getDate()} ${week[0].toLocaleDateString('fr-FR',{month:'short'})} – ${week[6].getDate()} ${week[6].toLocaleDateString('fr-FR',{month:'short',year:'numeric'})}`;
+  const onDrop=(e,date,h)=>{
+    e.preventDefault();
+    if(!dragId)return;
+    updateSession(dragId,{date,startH:h});
+    setDragId(null);
+  };
+  return(
+    <div style={{display:'flex',flexDirection:'column',height:'calc(100vh - 108px)',gap:14}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0,flexWrap:'wrap',gap:10}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <div style={{display:'flex',gap:4}}>
+            <Btn variant="secondary" size="sm" onClick={()=>setWeekOffset(w=>w-1)} icon="chevron-left"/>
+            <Btn variant="secondary" size="sm" onClick={()=>setWeekOffset(w=>w+1)} icon="chevron-right"/>
+          </div>
+          <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:17,color:'var(--n900)',letterSpacing:'-.015em'}}>{weekLabel}</div>
+          {weekOffset!==0&&<Btn variant="ghost" size="sm" onClick={()=>setWeekOffset(0)}>Aujourd'hui</Btn>}
+        </div>
+        <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+          {Object.entries(TYPES).map(([k,t])=>(
+            <div key={k} style={{display:'flex',alignItems:'center',gap:4}}>
+              <span style={{width:8,height:8,borderRadius:2,background:t.color}}/><span style={{fontSize:11,color:'var(--n500)'}}>{t.label}</span>
+            </div>
+          ))}
+          <Btn size="sm" onClick={()=>onNewSession()} icon="plus">Séance</Btn>
+        </div>
+      </div>
+      <div style={{flex:1,background:'#fff',border:'1px solid var(--n200)',borderRadius:'var(--rxl)',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'var(--sh-sm)'}}>
+        <div style={{display:'grid',gridTemplateColumns:'52px repeat(7,1fr)',borderBottom:'1px solid var(--n100)',flexShrink:0}}>
+          <div/>
+          {week.map((d,i)=>{
+            const ds=d.toISOString().slice(0,10);const isT=ds===TODAY;
+            return(
+              <div key={i} style={{padding:'9px 0',textAlign:'center',borderLeft:'1px solid var(--n100)',background:isT?'var(--vs)':'#fff'}}>
+                <div style={{fontSize:10,fontWeight:700,letterSpacing:'.07em',textTransform:'uppercase',color:isT?'var(--v)':'var(--n400)'}}>{d.toLocaleDateString('fr-FR',{weekday:'short'}).slice(0,3)}</div>
+                <div style={{fontFamily:'var(--fm)',fontSize:17,fontWeight:700,color:isT?'var(--v)':'var(--n900)',marginTop:1}}>{d.getDate()}</div>
+              </div>
+            );
+          })}
+        </div>
+        <div style={{flex:1,overflowY:'auto'}}>
+          <div style={{display:'grid',gridTemplateColumns:'52px repeat(7,1fr)',position:'relative'}}>
+            <div>{Array.from({length:HC},(_,i)=>i+HS).map(h=>(
+              <div key={h} style={{height:ROW,position:'relative'}}><span style={{position:'absolute',top:-8,right:6,fontFamily:'var(--fm)',fontSize:10,color:'var(--n300)'}}>{String(h).padStart(2,'0')}:00</span></div>
+            ))}</div>
+            {week.map((d,di)=>{
+              const ds=d.toISOString().slice(0,10);const isT=ds===TODAY;
+              const daySessions=state.sessions.filter(s=>s.date===ds);
+              return(
+                <div key={di} style={{position:'relative',borderLeft:'1px solid var(--n100)',background:isT?'rgba(84,58,134,.015)':'#fff'}}>
+                  {Array.from({length:HC},(_,i)=>i+HS).map(h=>(
+                    <div key={h} className="slot"
+                      onClick={()=>onNewSession({date:ds,startH:h})}
+                      onDragOver={e=>e.preventDefault()}
+                      onDrop={e=>onDrop(e,ds,h)}
+                      style={{height:ROW,borderBottom:'1px solid var(--n50)',transition:'var(--tr)'}}/>
+                  ))}
+                  {daySessions.map(s=>{
+                    const t=TYPES[s.type]||TYPES.force;
+                    const top=(s.startH-HS)*ROW+2;const height=(s.durH||1)*ROW-4;
+                    const parts=(s.participants||[]).map(p=>state.clients.find(x=>x.id===p.clientId)).filter(Boolean);
+                    const firstC=parts[0]||state.clients.find(x=>x.id===s.clientId);
+                    return(
+                      <div key={s.id}
+                        draggable
+                        onDragStart={e=>{e.dataTransfer.effectAllowed='move';setDragId(s.id);}}
+                        onDragEnd={()=>setDragId(null)}
+                        onClick={e=>{e.stopPropagation();setSelected(s);}} style={{position:'absolute',top,left:3,right:3,height,background:t.soft,borderLeft:`3px solid ${t.color}`,borderRadius:'var(--rmd)',padding:'4px 7px',cursor:'pointer',overflow:'hidden',boxShadow:'var(--sh-sm)',zIndex:1}}>
+                        <div style={{fontFamily:'var(--fm)',fontSize:9.5,fontWeight:600,color:t.color}}>{String(s.startH).padStart(2,'0')}:00</div>
+                        <div style={{fontSize:11,fontWeight:600,color:'var(--n900)',lineHeight:1.2,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{s.title||t.label}</div>
+                        {height>46&&firstC&&<div style={{fontSize:10,color:'var(--n500)',marginTop:1}}>{parts.length>1?`${parts.length} athlètes`:firstC.name}</div>}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      {selected&&(
+        <Modal open={!!selected} onClose={()=>setSelected(null)} title={selected.title||TYPES[selected.type]?.label||'Séance'}
+          subtitle={`${new Date(selected.date+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})} · ${String(selected.startH).padStart(2,'0')}:00`}
+          footer={completing?<>
+            <Btn variant="ghost" size="sm" onClick={()=>setCompleting(false)}>Annuler</Btn>
+            <div style={{flex:1}}/>
+            <Btn size="sm" icon="check" onClick={()=>{updateSession(selected.id,{status:'done',rpe:fb.rpe,charge:Math.round(fb.rpe*(selected.durH||1)*60),wellness:{fatigue:fb.fatigue,sommeil:fb.sommeil,douleur:fb.douleur}});setSelected(null);}}>Valider la séance</Btn>
+          </>:<>
+            <Btn variant="danger" size="sm" onClick={()=>{deleteSession(selected.id);setSelected(null);}} icon="trash-2">Supprimer</Btn>
+            <div style={{flex:1}}/>
+            <Btn variant="secondary" size="sm" onClick={()=>{onNewSession({...selected});setSelected(null);}} icon="pencil">Modifier</Btn>
+            {selected.status!=='done'
+              ?<Btn size="sm" onClick={()=>setCompleting(true)} icon="check">Marquer réalisée</Btn>
+              :<Btn variant="secondary" size="sm" onClick={()=>setCompleting(true)} icon="pencil">Modifier le ressenti</Btn>
+            }
+          </>}>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+              <Tag type={selected.type}/>
+              <span style={{fontSize:12,color:'var(--n400)',display:'flex',alignItems:'center',gap:4}}><Icon n="clock" s={13} c="var(--n400)"/>{(selected.durH||1)<1?(selected.durH||1)*60+' min':(selected.durH||1)+'h'}</span>
+            </div>
+{(()=>{
+              const parts=(selected.participants||[]).map(p=>({p,c:state.clients.find(x=>x.id===p.clientId)})).filter(x=>x.c);
+              const solo=state.clients.find(x=>x.id===selected.clientId);
+              const display=parts.length>0?parts:[solo?{p:{},c:solo}:null].filter(Boolean);
+              if(!display.length)return null;
+              return(
+                <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                  {display.map(({p,c},i)=>{
+                    const tarif=p.tarifId?state.tarifs.find(t=>t.id===p.tarifId):null;
+                    return(
+                      <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'9px 12px',background:'var(--n50)',borderRadius:'var(--rlg)'}}>
+                        <Avatar name={c.name} size={34}/>
+                        <div style={{flex:1}}>
+                          <div style={{fontSize:13.5,fontWeight:600,color:'var(--n900)'}}>{c.name}</div>
+                          <div style={{fontSize:12,color:'var(--n500)'}}>{c.sport}</div>
+                        </div>
+                        {tarif&&<span style={{fontFamily:'var(--fm)',fontSize:13,fontWeight:700,color:'var(--v)',whiteSpace:'nowrap'}}>{new Intl.NumberFormat('fr-FR').format(tarif.prix)} €</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+            {selected.notes&&<div style={{fontSize:13.5,color:'var(--n700)',background:'var(--n50)',borderRadius:'var(--rlg)',padding:'10px 14px',lineHeight:1.55,whiteSpace:'pre-wrap'}}>{selected.notes}</div>}
+            {completing&&(()=>{
+              const SLIDERS=[
+                {k:'rpe',label:'RPE — Intensité perçue',min:1,max:10,hint:['Très facile','Facile','Modéré','Soutenu','Dur','Très dur','Maximal'],color:'var(--v)'},
+                {k:'fatigue',label:'Fatigue avant séance',min:1,max:5,hint:['Fraîs','OK','Moyen','Fatigué','Épuisé'],color:'var(--orange)'},
+                {k:'sommeil',label:'Qualité sommeil',min:1,max:5,hint:['Mauvais','Moyen','Correct','Bon','Excellent'],color:'var(--teal)'},
+                {k:'douleur',label:'Douleurs / courbatures',min:1,max:5,hint:['Aucune','Légère','Modérée','Forte','Sévère'],color:'var(--red)'},
+              ];
+              return(
+                <div style={{display:'flex',flexDirection:'column',gap:14,padding:'14px 0 2px',borderTop:'1px dashed var(--n200)'}}>
+                  <div style={{fontSize:12,fontWeight:700,letterSpacing:'.05em',textTransform:'uppercase',color:'var(--v)'}}>Ressenti de la séance</div>
+                  {SLIDERS.map(sl=>{
+                    const val=fb[sl.k];const pct=((val-sl.min)/(sl.max-sl.min))*100;
+                    const hintIdx=sl.max===10?Math.min(6,Math.floor((val-1)/1.5)):val-1;
+                    return(
+                      <div key={sl.k}>
+                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:6}}>
+                          <span style={{fontSize:13,fontWeight:600,color:'var(--n900)'}}>{sl.label}</span>
+                          <span style={{display:'flex',alignItems:'baseline',gap:6}}>
+                            <span style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:15,color:sl.color}}>{val}</span>
+                            <span style={{fontSize:11.5,color:'var(--n400)'}}>{sl.hint[hintIdx]}</span>
+                          </span>
+                        </div>
+                        <input type="range" min={sl.min} max={sl.max} value={val} onChange={e=>setFb(p=>({...p,[sl.k]:Number(e.target.value)}))} style={{width:'100%',height:6,borderRadius:99,appearance:'none',cursor:'pointer',background:`linear-gradient(90deg, ${sl.color} ${pct}%, var(--n150) ${pct}%)`,accentColor:sl.color}}/>
+                      </div>
+                    );
+                  })}
+                  <div style={{display:'flex',alignItems:'center',gap:8,padding:'10px 14px',background:'var(--vs)',borderRadius:'var(--rlg)'}}>
+                    <Icon n="flame" s={16} c="var(--v)"/>
+                    <span style={{fontSize:13,color:'var(--n700)'}}>Charge calculée : <strong style={{fontFamily:'var(--fm)',color:'var(--v)'}}>{Math.round(fb.rpe*(selected.durH||1)*60)} UA</strong> <span style={{color:'var(--n400)',fontSize:12}}>(RPE × {Math.round((selected.durH||1)*60)} min)</span></span>
+                  </div>
+                </div>
+              );
+            })()}
+            {!completing&&selected.status==='done'&&selected.rpe&&(
+              <div style={{display:'flex',gap:8,flexWrap:'wrap',padding:'10px 14px',background:'var(--greens)',borderRadius:'var(--rlg)'}}>
+                <span style={{fontSize:12.5,color:'var(--n700)'}}>RPE <strong style={{fontFamily:'var(--fm)',color:'var(--green)'}}>{selected.rpe}</strong></span>
+                <span style={{color:'var(--n300)'}}>·</span>
+                <span style={{fontSize:12.5,color:'var(--n700)'}}>Charge <strong style={{fontFamily:'var(--fm)',color:'var(--green)'}}>{selected.charge||Math.round(selected.rpe*(selected.durH||1)*60)} UA</strong></span>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+/* ── ATHLÈTES ── */
+function ClientsScreen({onAdd}){
+  const {state,deleteClient}=useStore();
+  const [edit,setEdit]=React.useState(null);
+  const [editOpen,setEditOpen]=React.useState(false);
+  const [search,setSearch]=React.useState('');
+  const filtered=state.clients.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||(c.sport||'').toLowerCase().includes(search.toLowerCase()));
+  return(
+    <div style={{display:'flex',flexDirection:'column',gap:18,maxWidth:1280}}>
+      <ClientModal open={editOpen} onClose={()=>{setEditOpen(false);setEdit(null);}} editClient={edit}/>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:14,flexWrap:'wrap'}}>
+        <div style={{height:36,width:260,border:'1px solid var(--n200)',borderRadius:'var(--rmd)',background:'var(--n50)',display:'flex',alignItems:'center',padding:'0 10px',gap:7}}>
+          <Icon n="search" s={14} c="var(--n400)"/>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Rechercher…" style={{border:'none',background:'transparent',outline:'none',fontSize:13.5,color:'var(--n900)',width:'100%',fontFamily:'var(--fb)'}}/>
+        </div>
+        <Btn onClick={onAdd} icon="user-plus">Ajouter un athlète</Btn>
+      </div>
+      {filtered.length===0
+        ?<Empty icon="users" title="Aucun athlète" sub={search?'Aucun résultat.':'Ajoutez vos athlètes pour démarrer le suivi.'} action={!search&&<Btn onClick={onAdd} icon="user-plus">Ajouter un athlète</Btn>}/>
+        :<div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
+          {filtered.map(c=>{
+            const sessions=state.sessions.filter(s=>s.clientId===c.id);
+            const done=sessions.filter(s=>s.status==='done').length;
+            return(
+              <div key={c.id} style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:20,boxShadow:'var(--sh-sm)',display:'flex',flexDirection:'column',gap:14}}>
+                <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
+                  <Avatar name={c.name} size={48} status="online"/>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:16,color:'var(--n900)',letterSpacing:'-.01em',marginBottom:2}}>{c.name}</div>
+                    <div style={{fontSize:12.5,color:'var(--n500)'}}>{c.sport||'—'}</div>
+                    {c.goal&&<div style={{fontSize:12,color:'var(--n400)',marginTop:1}}>{c.goal}</div>}
+                  </div>
+                  <button onClick={()=>{setEdit(c);setEditOpen(true);}} style={{border:'none',background:'transparent',padding:4,borderRadius:'var(--rsm)'}}><Icon n="pencil" s={15} c="var(--n400)"/></button>
+                </div>
+                <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                  <span style={{fontSize:11.5,fontWeight:600,padding:'2px 9px',borderRadius:'var(--rpill)',background:'var(--vs)',color:'var(--v)',border:'1px solid var(--v100)'}}>{c.level}</span>
+                  {c.phone&&<span style={{fontSize:11.5,color:'var(--n500)',display:'flex',alignItems:'center',gap:3}}><Icon n="phone" s={11} c="var(--n400)"/>{c.phone}</span>}
+                </div>
+                <div style={{paddingTop:12,borderTop:'1px solid var(--n100)',display:'flex',flexDirection:'column',gap:8}}>
+                  <div>
+                    <div style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.06em',color:'var(--n400)',marginBottom:5}}>Activité 7 derniers jours</div>
+                    <Sparkline sessions={state.sessions} clientId={c.id}/>
+                  </div>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <div>
+                      <div style={{fontSize:10.5,fontWeight:700,textTransform:'uppercase',letterSpacing:'.06em',color:'var(--n400)',marginBottom:3}}>Total séances</div>
+                      <div style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:17,color:'var(--n900)'}}>{done} <span style={{fontSize:11.5,fontWeight:400,color:'var(--n400)'}}>/ {sessions.length} réalisées</span></div>
+                    </div>
+                    <button onClick={()=>{if(confirm(`Supprimer ${c.name} ?`))deleteClient(c.id);}} style={{border:'none',background:'transparent',padding:4,borderRadius:'var(--rsm)'}}><Icon n="trash-2" s={15} c="var(--n300)"/></button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      }
+    </div>
+  );
+}
+
+/* ── VUE MATRICIELLE GROUPE ── */
+function MatrixView(){
+  const {state,updateSession}=useStore();
+  const [weeks,setWeeks]=React.useState(0);
+  const getWeek=offset=>{
+    const now=new Date();const day=now.getDay()||7;
+    const mon=new Date(now);mon.setDate(now.getDate()-day+1+offset*7);
+    return Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d;});
+  };
+  const week=getWeek(weeks);
+  const TODAY=new Date().toISOString().slice(0,10);
+  if(state.clients.length===0) return <Empty icon="layout-grid" title="Aucun athlète" sub="Ajoutez des athlètes pour utiliser la vue groupe."/>;
+  return(
+    <div style={{display:'flex',flexDirection:'column',gap:14}}>
+      <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+        <div style={{display:'flex',gap:4}}>
+          <Btn variant="secondary" size="sm" onClick={()=>setWeeks(w=>w-1)} icon="chevron-left"/>
+          <Btn variant="secondary" size="sm" onClick={()=>setWeeks(w=>w+1)} icon="chevron-right"/>
+        </div>
+        <span style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:16,color:'var(--n900)',letterSpacing:'-.015em'}}>
+          {week[0].getDate()} {week[0].toLocaleDateString('fr-FR',{month:'short'})} – {week[6].getDate()} {week[6].toLocaleDateString('fr-FR',{month:'short',year:'numeric'})}
+        </span>
+        {weeks!==0&&<Btn variant="ghost" size="sm" onClick={()=>setWeeks(0)}>Aujourd'hui</Btn>}
+        <div style={{marginLeft:'auto',display:'flex',gap:6,flexWrap:'wrap'}}>
+          {Object.entries(TYPES).map(([k,t])=>(
+            <div key={k} style={{display:'flex',alignItems:'center',gap:3}}><span style={{width:8,height:8,borderRadius:2,background:t.color}}/><span style={{fontSize:11,color:'var(--n500)'}}>{t.label}</span></div>
+          ))}
+        </div>
+      </div>
+      <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',overflow:'auto',boxShadow:'var(--sh-sm)'}}>
+        <table style={{borderCollapse:'collapse',width:'100%',minWidth:700}}>
+          <thead>
+            <tr style={{background:'var(--n50)'}}>
+              <th style={{padding:'10px 16px',textAlign:'left',fontSize:11.5,fontWeight:700,color:'var(--n500)',borderBottom:'1px solid var(--n150)',whiteSpace:'nowrap',width:160}}>Athlète</th>
+              {week.map((d,i)=>{
+                const ds=d.toISOString().slice(0,10);const isT=ds===TODAY;
+                return(
+                  <th key={i} style={{padding:'10px 0',textAlign:'center',borderBottom:'1px solid var(--n150)',borderLeft:'1px solid var(--n100)',background:isT?'var(--vs)':'transparent',minWidth:100}}>
+                    <div style={{fontSize:10,fontWeight:700,letterSpacing:'.07em',textTransform:'uppercase',color:isT?'var(--v)':'var(--n400)'}}>{d.toLocaleDateString('fr-FR',{weekday:'short'}).slice(0,3)}</div>
+                    <div style={{fontFamily:'var(--fm)',fontSize:16,fontWeight:700,color:isT?'var(--v)':'var(--n900)',marginTop:1}}>{d.getDate()}</div>
+                  </th>
+                );
+              })}
+              <th style={{padding:'10px 12px',textAlign:'center',borderBottom:'1px solid var(--n150)',borderLeft:'1px solid var(--n100)',fontSize:11,fontWeight:700,color:'var(--n400)',whiteSpace:'nowrap'}}>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {state.clients.map((c,ci)=>{
+              const rowSessions=week.map(d=>{
+                const ds=d.toISOString().slice(0,10);
+                return state.sessions.filter(s=>{
+                  const inParts=(s.participants||[]).some(p=>p.clientId===c.id)||s.clientId===c.id;
+                  return inParts&&s.date===ds;
+                });
+              });
+              const total=rowSessions.flat().length;
+              return(
+                <tr key={c.id} style={{borderBottom:ci<state.clients.length-1?'1px solid var(--n50)':'none'}}>
+                  <td style={{padding:'10px 16px',whiteSpace:'nowrap'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:9}}>
+                      <Avatar name={c.name} size={30}/>
+                      <div>
+                        <div style={{fontSize:13.5,fontWeight:600,color:'var(--n900)'}}>{c.name}</div>
+                        <div style={{fontSize:11,color:'var(--n400)'}}>{c.sport||c.level}</div>
+                      </div>
+                    </div>
+                  </td>
+                  {rowSessions.map((daySess,di)=>{
+                    const ds=week[di].toISOString().slice(0,10);const isT=ds===TODAY;
+                    return(
+                      <td key={di} style={{padding:'6px 6px',textAlign:'center',borderLeft:'1px solid var(--n100)',background:isT?'rgba(84,58,134,.02)':'transparent',verticalAlign:'middle'}}>
+                        {daySess.length===0
+                          ?<span style={{display:'block',width:10,height:10,borderRadius:'50%',background:'var(--n100)',margin:'auto'}}/>
+                          :<div style={{display:'flex',flexDirection:'column',gap:3,alignItems:'center'}}>
+                            {daySess.map(s=>{
+                              const t=TYPES[s.type]||TYPES.force;
+                              const statC=s.status==='done'?'var(--green)':s.status==='missed'?'var(--red)':t.color;
+                              return(
+                                <div key={s.id} title={`${s.title||t.label} · ${s.status}`} style={{display:'inline-flex',alignItems:'center',gap:4,padding:'3px 8px',background:t.soft,borderLeft:`2.5px solid ${statC}`,borderRadius:4,fontSize:10.5,fontWeight:600,color:t.color,whiteSpace:'nowrap',maxWidth:90,overflow:'hidden',textOverflow:'ellipsis'}}>
+                                  {s.title||t.label}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        }
+                      </td>
+                    );
+                  })}
+                  <td style={{padding:'10px 12px',textAlign:'center',borderLeft:'1px solid var(--n100)'}}>
+                    <span style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:16,color:total>0?'var(--v)':'var(--n300)'}}>{total}</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ── RAPPORT ATHLÈTE PDF ── */
+function AthleteReport({client,sessions,tarifs}){
+  const done=sessions.filter(s=>s.status==='done');
+  const taux=sessions.length?Math.round((done.length/sessions.length)*100):0;
+  const now=new Date();
+  const month=now.toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  const byType=Object.entries(TYPES).map(([k,t])=>({...t,key:k,count:sessions.filter(s=>s.type===k).length})).filter(t=>t.count>0);
+  const recent=[...sessions].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  const SS={'done':{l:'Réalisée',c:'#16a34a'},'missed':{l:'Manquée',c:'#e11d48'},'upcoming':{l:'À venir',c:'#2E1F52'}};
+  return(
+    <div id="report-print" style={{width:800,fontFamily:'Hanken Grotesk, sans-serif',color:'#141921',padding:40,boxSizing:'border-box'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:28,paddingBottom:20,borderBottom:'2px solid #2E1F52'}}>
+        <div>
+          <div style={{fontFamily:'Sora, sans-serif',fontWeight:800,fontSize:24,letterSpacing:'-.02em',color:'#131017'}}>Rapport mensuel</div>
+          <div style={{fontSize:14,color:'#6b7482',marginTop:3}}>Période : {month}</div>
+        </div>
+        <div style={{textAlign:'right'}}>
+          <div style={{fontFamily:'Sora, sans-serif',fontWeight:800,fontSize:16,color:'#131017'}}>Pierrick Briend</div>
+          <div style={{fontSize:12,color:'#6b7482'}}>Préparation Physique</div>
+        </div>
+      </div>
+      <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:24}}>
+        <div style={{width:60,height:60,borderRadius:'50%',background:'#f3f0fa',color:'#2E1F52',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'Sora, sans-serif',fontWeight:800,fontSize:22}}>
+          {client.name.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+        </div>
+        <div>
+          <div style={{fontFamily:'Sora, sans-serif',fontWeight:700,fontSize:20,color:'#131017'}}>{client.name}</div>
+          <div style={{fontSize:13,color:'#6b7482'}}>{client.sport} · {client.level}{client.goal?' · '+client.goal:''}</div>
+        </div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
+        {[{l:'Séances totales',v:sessions.length,c:'#2E1F52'},{l:'Réalisées',v:done.length,c:'#16a34a'},{l:'Taux de complétion',v:taux+'%',c:'#2f6bf2'},{l:'Manquées',v:sessions.filter(s=>s.status==='missed').length,c:'#e11d48'}].map((k,i)=>(
+          <div key={i} style={{background:'#f6f8fa',borderRadius:10,padding:'12px 14px'}}>
+            <div style={{fontSize:10,fontWeight:700,letterSpacing:'.07em',textTransform:'uppercase',color:'#939cab',marginBottom:6}}>{k.l}</div>
+            <div style={{fontFamily:'JetBrains Mono, monospace',fontWeight:700,fontSize:22,color:k.c}}>{k.v}</div>
+          </div>
+        ))}
+      </div>
+      {byType.length>0&&(
+        <div style={{marginBottom:22}}>
+          <div style={{fontFamily:'Sora, sans-serif',fontWeight:700,fontSize:13,color:'#141921',marginBottom:10}}>Répartition par type</div>
+          <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+            {byType.map(t=>(
+              <div key={t.key} style={{display:'inline-flex',alignItems:'center',gap:6,padding:'4px 10px',background:t.soft,borderLeft:`3px solid ${t.color}`,borderRadius:5}}>
+                <span style={{fontSize:12,fontWeight:600,color:t.color}}>{t.label}</span>
+                <span style={{fontFamily:'JetBrains Mono, monospace',fontSize:12,fontWeight:700,color:'#141921'}}>{t.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div>
+        <div style={{fontFamily:'Sora, sans-serif',fontWeight:700,fontSize:13,color:'#141921',marginBottom:10}}>Historique des séances</div>
+        {recent.map((s,i)=>{
+          const t=TYPES[s.type]||TYPES.force;const st=SS[s.status]||SS.upcoming;
+          return(
+            <div key={s.id} style={{display:'flex',alignItems:'center',gap:12,padding:'8px 0',borderBottom:i<recent.length-1?'1px solid #eef1f5':'none'}}>
+              <span style={{fontFamily:'JetBrains Mono, monospace',fontSize:11,color:'#939cab',width:80,flexShrink:0}}>{new Date(s.date+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>
+              <span style={{flex:1,fontSize:13,fontWeight:600,color:'#141921'}}>{s.title||t.label}</span>
+              <span style={{fontSize:11,fontWeight:600,padding:'2px 8px',borderRadius:99,color:st.c,background:st.c+'18'}}>{st.l}</span>
+            </div>
+          );
+        })}
+      </div>
+      {client.notes&&(
+        <div style={{marginTop:20,padding:'14px 16px',background:'#f6f8fa',borderRadius:10}}>
+          <div style={{fontSize:11,fontWeight:700,textTransform:'uppercase',letterSpacing:'.06em',color:'#939cab',marginBottom:6}}>Notes coach</div>
+          <div style={{fontSize:13,color:'#383f4a',lineHeight:1.6}}>{client.notes}</div>
+        </div>
+      )}
+      <div style={{marginTop:24,paddingTop:14,borderTop:'1px solid #eef1f5',fontSize:11,color:'#939cab',display:'flex',justifyContent:'space-between'}}>
+        <span>Généré le {new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</span>
+        <span>Pierrick Briend · Préparation Physique</span>
+      </div>
+    </div>
+  );
+}
+
+
+/* ── TESTS 30-15 IFT ── */
+// VO2max estimé (Buchheit 2008) ; G:1 H / 2 F
+function iftVO2max(vift,age,weight,sex){
+  const G=sex==='F'?2:1;
+  return 28.3-2.15*G-0.741*age-0.0357*weight+0.0586*age*vift+1.03*vift;
+}
+// Formats HIIT football : % VIFT → vitesse + distance par répétition
+const IFT_FORMATS=[
+  {label:'Intervalles longs',detail:'4 × 4 min',pct:90,sec:null,note:'Capacité aérobie'},
+  {label:'30/30',detail:'30s effort · 30s récup',pct:95,sec:30,note:'Puissance aérobie'},
+  {label:'15/15',detail:'15s effort · 15s récup',pct:100,sec:15,note:'PMA + changements de direction'},
+  {label:'15/15 intensif',detail:'15s effort · 15s récup',pct:105,sec:15,note:'Tolérance lactique'},
+];
+function IFTTestsCard({cId,client}){
+  const {state,addTest,deleteTest}=useStore();
+  const tests=(state.tests||[]).filter(t=>t.clientId===cId).sort((a,b)=>b.date.localeCompare(a.date));
+  const [open,setOpen]=React.useState(false);
+  const [form,setForm]=React.useState({date:new Date().toISOString().slice(0,10),vift:'',weight:'',age:'',sex:'H'});
+  React.useEffect(()=>{ setOpen(false); setForm(f=>({...f,vift:'',weight:tests[0]?.weight||'',age:tests[0]?.age||'',sex:tests[0]?.sex||'H'})); },[cId]);
+  const latest=tests[0];
+  const prev=tests[1];
+  const submit=()=>{
+    const vift=parseFloat(form.vift);if(!vift||vift<10||vift>30)return;
+    addTest({clientId:cId,date:form.date,vift,weight:parseFloat(form.weight)||70,age:parseFloat(form.age)||25,sex:form.sex});
+    setForm(f=>({...f,vift:''}));setOpen(false);
+  };
+  const card={background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:'18px 20px',boxShadow:'var(--sh-sm)'};
+  return(
+    <div style={card}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:4,flexWrap:'wrap',gap:10}}>
+        <div>
+          <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:15,color:'var(--n900)'}}>Test 30-15 IFT</div>
+          <div style={{fontSize:11.5,color:'var(--n400)',marginTop:2}}>Test intermittent navette avec changements de direction · spécifique football</div>
+        </div>
+        <Btn size="sm" variant={open?'secondary':'primary'} icon={open?'x':'plus'} onClick={()=>setOpen(o=>!o)}>{open?'Annuler':'Nouveau test'}</Btn>
+      </div>
+      {open&&(
+        <div style={{display:'flex',gap:10,flexWrap:'wrap',alignItems:'flex-end',padding:'14px 0 16px',marginTop:8,borderTop:'1px dashed var(--n200)'}}>
+          {[['date','Date','date'],['vift','VIFT (km/h)','number'],['weight','Poids (kg)','number'],['age','Âge','number']].map(([k,l,t])=>(
+            <div key={k} style={{display:'flex',flexDirection:'column',gap:4}}>
+              <label style={{fontSize:11,fontWeight:600,color:'var(--n500)'}}>{l}</label>
+              <input type={t} step={k==='vift'?'0.5':'1'} value={form[k]} placeholder={k==='vift'?'ex. 19.5':''} onChange={e=>setForm(f=>({...f,[k]:e.target.value}))} style={{width:k==='date'?140:90,height:36,border:'1px solid var(--n200)',borderRadius:'var(--rmd)',padding:'0 10px',fontSize:13.5,fontFamily:k==='date'?'var(--fb)':'var(--fm)',color:'var(--n900)'}}/>
+            </div>
+          ))}
+          <div style={{display:'flex',flexDirection:'column',gap:4}}>
+            <label style={{fontSize:11,fontWeight:600,color:'var(--n500)'}}>Sexe</label>
+            <div style={{display:'flex',gap:3,background:'var(--n100)',borderRadius:'var(--rmd)',padding:3,height:36}}>
+              {['H','F'].map(s=><button key={s} onClick={()=>setForm(f=>({...f,sex:s}))} style={{padding:'0 12px',border:'none',borderRadius:'var(--rsm)',fontSize:13,fontWeight:600,cursor:'pointer',background:form.sex===s?'#fff':'transparent',color:form.sex===s?'var(--v)':'var(--n500)'}}>{s}</button>)}
+            </div>
+          </div>
+          <Btn size="sm" icon="check" onClick={submit}>Enregistrer</Btn>
+        </div>
+      )}
+      {!latest
+        ?<div style={{fontSize:13,color:'var(--n500)',lineHeight:1.55,marginTop:12,padding:'14px 16px',background:'var(--n50)',borderRadius:'var(--rlg)'}}>Aucun test enregistré. La <strong>VIFT</strong> (vitesse finale) permet de prescrire automatiquement les vitesses de tes intervalles HIIT et d'estimer la VO2max.</div>
+        :(()=>{
+          const vo2=iftVO2max(latest.vift,latest.age,latest.weight,latest.sex);
+          const delta=prev?(latest.vift-prev.vift):null;
+          const maxV=Math.max(...tests.map(t=>t.vift));
+          const minV=Math.min(...tests.map(t=>t.vift));
+          const range=Math.max(1,maxV-minV);
+          const chron=[...tests].sort((a,b)=>a.date.localeCompare(b.date));
+          return(
+            <div style={{marginTop:14,display:'flex',flexDirection:'column',gap:16}}>
+              {/* Résumé + VO2max */}
+              <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+                <div style={{flex:'1 1 160px',padding:'14px 16px',background:'var(--vs)',borderRadius:'var(--rlg)'}}>
+                  <div style={{fontSize:10.5,fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--v)',marginBottom:6}}>VIFT actuelle</div>
+                  <div style={{display:'flex',alignItems:'baseline',gap:8}}>
+                    <span style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:30,color:'var(--v)',lineHeight:1}}>{latest.vift}</span>
+                    <span style={{fontSize:13,color:'var(--n500)'}}>km/h</span>
+                    {delta!==null&&<span style={{fontSize:12,fontWeight:700,color:delta>0?'var(--green)':delta<0?'var(--red)':'var(--n400)'}}>{delta>0?'+':''}{delta.toFixed(1)}</span>}
+                  </div>
+                </div>
+                <div style={{flex:'1 1 160px',padding:'14px 16px',background:'var(--teals)',borderRadius:'var(--rlg)'}}>
+                  <div style={{fontSize:10.5,fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--teal)',marginBottom:6}}>VO₂max estimée</div>
+                  <div style={{display:'flex',alignItems:'baseline',gap:8}}>
+                    <span style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:30,color:'var(--teal)',lineHeight:1}}>{vo2.toFixed(1)}</span>
+                    <span style={{fontSize:13,color:'var(--n500)'}}>ml/kg/min</span>
+                  </div>
+                </div>
+              </div>
+              {/* Prescription HIIT */}
+              <div>
+                <div style={{fontSize:12,fontWeight:700,letterSpacing:'.04em',textTransform:'uppercase',color:'var(--n500)',marginBottom:9}}>Vitesses HIIT prescrites <span style={{color:'var(--n400)',fontWeight:500,textTransform:'none',letterSpacing:0}}>· d'après VIFT {latest.vift} km/h</span></div>
+                <div style={{border:'1px solid var(--n150)',borderRadius:'var(--rlg)',overflow:'hidden'}}>
+                  <div style={{display:'grid',gridTemplateColumns:'1.6fr .6fr .9fr 1fr',gap:0,background:'var(--n50)',padding:'8px 14px',fontSize:10.5,fontWeight:700,letterSpacing:'.05em',textTransform:'uppercase',color:'var(--n400)'}}>
+                    <span>Format</span><span style={{textAlign:'right'}}>%VIFT</span><span style={{textAlign:'right'}}>Vitesse</span><span style={{textAlign:'right'}}>Distance/rép</span>
+                  </div>
+                  {IFT_FORMATS.map((f,i)=>{
+                    const spd=latest.vift*f.pct/100;
+                    const dist=f.sec?Math.round(spd/3.6*f.sec):null;
+                    return(
+                      <div key={i} style={{display:'grid',gridTemplateColumns:'1.6fr .6fr .9fr 1fr',gap:0,padding:'10px 14px',borderTop:'1px solid var(--n100)',alignItems:'center'}}>
+                        <div><div style={{fontSize:13.5,fontWeight:600,color:'var(--n900)'}}>{f.label} <span style={{fontWeight:400,color:'var(--n400)',fontSize:12}}>· {f.detail}</span></div><div style={{fontSize:11,color:'var(--n400)'}}>{f.note}</div></div>
+                        <span style={{textAlign:'right',fontFamily:'var(--fm)',fontSize:13,color:'var(--n500)'}}>{f.pct}%</span>
+                        <span style={{textAlign:'right',fontFamily:'var(--fm)',fontWeight:700,fontSize:14,color:'var(--v)'}}>{spd.toFixed(1)}<span style={{fontSize:10.5,color:'var(--n400)',fontWeight:400}}> km/h</span></span>
+                        <span style={{textAlign:'right',fontFamily:'var(--fm)',fontWeight:600,fontSize:13.5,color:'var(--n900)'}}>{dist?dist+' m':'—'}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Progression VIFT */}
+              {tests.length>1&&(
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,letterSpacing:'.04em',textTransform:'uppercase',color:'var(--n500)',marginBottom:10}}>Progression VIFT</div>
+                  <div style={{display:'flex',alignItems:'flex-end',gap:10,height:110,padding:'0 4px'}}>
+                    {chron.map((t,i)=>{
+                      const h=20+((t.vift-minV)/range)*78;
+                      return(
+                        <div key={t.id} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:5,minWidth:0}}>
+                          <span style={{fontFamily:'var(--fm)',fontSize:11,fontWeight:700,color:'var(--v)'}}>{t.vift}</span>
+                          <div style={{width:'100%',maxWidth:40,height:h,borderRadius:'6px 6px 0 0',background:i===chron.length-1?'var(--v)':'var(--violet100,#e4ddf2)'}}/>
+                          <span style={{fontSize:9.5,color:'var(--n400)',fontFamily:'var(--fm)',whiteSpace:'nowrap'}}>{new Date(t.date+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {/* Historique */}
+              <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                {tests.map(t=>(
+                  <div key={t.id} style={{display:'flex',alignItems:'center',gap:12,padding:'8px 12px',background:'var(--n50)',borderRadius:'var(--rmd)'}}>
+                    <span style={{fontFamily:'var(--fm)',fontSize:12,color:'var(--n500)',width:90}}>{new Date(t.date+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'2-digit'})}</span>
+                    <span style={{fontFamily:'var(--fm)',fontSize:13,fontWeight:700,color:'var(--n900)'}}>{t.vift} km/h</span>
+                    <span style={{fontSize:12,color:'var(--n400)'}}>VO₂ {iftVO2max(t.vift,t.age,t.weight,t.sex).toFixed(1)}</span>
+                    <span style={{fontSize:12,color:'var(--n400)'}}>{t.weight}kg · {t.age}ans</span>
+                    <button onClick={()=>deleteTest(t.id)} title="Supprimer" style={{marginLeft:'auto',border:'none',background:'transparent',cursor:'pointer',padding:4,color:'var(--n400)',display:'flex'}}><Icon n="trash-2" s={14}/></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+    </div>
+  );
+}
+
+function PerformanceScreen(){
+  const {state}=useStore();
+  const [cId,setCId]=React.useState('');
+  const [view,setView]=React.useState('indiv');
+  const [reportOpen,setReportOpen]=React.useState(false);
+  const client=state.clients.find(c=>c.id===cId);
+  const sessions=client?state.sessions.filter(s=>{
+    if(s.participants&&s.participants.length>0) return s.participants.some(p=>p.clientId===cId);
+    return s.clientId===cId;
+  }):[];
+  const done=sessions.filter(s=>s.status==='done');
+  const byType=Object.entries(TYPES).map(([k,t])=>({...t,key:k,count:sessions.filter(s=>s.type===k).length})).filter(t=>t.count>0);
+  const printReport=()=>{
+    const win=window.open('','_blank');
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Rapport ${client?.name||''}</title><link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@500;700&family=Bebas+Neue&display=swap" rel="stylesheet"/><style>body{margin:0;padding:0;background:#fff;}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}</style></head><body>`);
+    const el=document.getElementById('report-print');
+    if(el)win.document.write(el.outerHTML);
+    win.document.write('</body></html>');
+    win.document.close();
+    setTimeout(()=>{win.print();},400);
+  };
+  if(state.clients.length===0) return <Empty icon="activity" title="Aucun athlète suivi" sub="Ajoutez des athlètes et planifiez des séances pour suivre leur progression."/>;
+  return(
+    <div style={{display:'flex',flexDirection:'column',gap:20,maxWidth:1280}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+        <div style={{display:'flex',gap:4,background:'var(--n100)',borderRadius:'var(--rlg)',padding:3}}>
+          {[['indiv','Individuel'],['matrix','Vue groupe']].map(([k,l])=>(
+            <button key={k} onClick={()=>setView(k)} style={{padding:'6px 14px',border:'none',borderRadius:'var(--rmd)',fontSize:13,fontWeight:view===k?600:500,cursor:'pointer',background:view===k?'#fff':'transparent',color:view===k?'var(--n900)':'var(--n500)',boxShadow:view===k?'var(--sh-sm)':'none',transition:'var(--tr)'}}>{l}</button>
+          ))}
+        </div>
+      </div>
+      {view==='matrix'
+        ?<MatrixView/>
+        :(<>
+          <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+            {state.clients.map(c=>(
+              <button key={c.id} onClick={()=>setCId(c.id)} style={{display:'flex',alignItems:'center',gap:9,padding:'8px 14px',border:`1.5px solid ${cId===c.id?'var(--v)':'var(--n200)'}`,borderRadius:'var(--rpill)',cursor:'pointer',background:cId===c.id?'var(--vs)':'#fff',transition:'var(--tr)'}}>
+                <Avatar name={c.name} size={28}/><span style={{fontSize:13.5,fontWeight:600,color:cId===c.id?'var(--v)':'var(--n900)'}}>{c.name}</span>
+              </button>
+            ))}
+          </div>
+          {!client
+            ?<Empty icon="bar-chart-2" title="Sélectionnez un athlète" sub="Choisissez un athlète ci-dessus pour voir ses statistiques."/>
+            :<>
+                {sessions.length===0
+                  ?<div style={{background:'var(--n50)',border:'1px dashed var(--n200)',borderRadius:'var(--rxl)',padding:'16px 20px',display:'flex',alignItems:'center',gap:12}}>
+                    <Icon n="calendar-x" s={18} c="var(--n400)"/>
+                    <div style={{fontSize:13,color:'var(--n500)',lineHeight:1.5}}>Aucune séance pour cet athlète pour l'instant. Créez des séances pour suivre charge & complétion — vous pouvez déjà enregistrer un test physique ci-dessous.</div>
+                  </div>
+                  :<>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}}>
+                  <Kpi label="Total séances" val={sessions.length} icon="calendar" accent="var(--v)"/>
+                  <Kpi label="Réalisées" val={done.length} icon="check-circle" accent="var(--teal)"/>
+                  <Kpi label="Taux de complétion" val={Math.round((done.length/sessions.length)*100)} unit="%" icon="trending-up" accent="var(--blue)"/>
+                  <Kpi label="Manquées" val={sessions.filter(s=>s.status==='missed').length} icon="x-circle" accent="var(--red)"/>
+                </div>
+                {(()=>{
+                  // ── Charge & ACWR (ratio charge aiguë / chronique) ──
+                  const doneS=sessions.filter(s=>s.status==='done'&&s.charge);
+                  if(doneS.length<1) return (
+                    <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:'18px 20px',boxShadow:'var(--sh-sm)'}}>
+                      <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:15,color:'var(--n900)',marginBottom:6}}>Charge d'entraînement & risque</div>
+                      <div style={{fontSize:13,color:'var(--n500)',lineHeight:1.55}}>Renseignez le <strong>RPE</strong> en marquant les séances « réalisées » (onglet Calendrier) pour suivre la charge réelle et le ratio de risque de blessure (ACWR).</div>
+                    </div>
+                  );
+                  const today=new Date();
+                  const dayDiff=d=>Math.floor((today-new Date(d+'T12:00'))/86400000);
+                  const acute=doneS.filter(s=>dayDiff(s.date)>=0&&dayDiff(s.date)<7).reduce((a,s)=>a+s.charge,0);
+                  const last28=doneS.filter(s=>dayDiff(s.date)>=0&&dayDiff(s.date)<28);
+                  const chronic=last28.length?last28.reduce((a,s)=>a+s.charge,0)/4:0;
+                  const acwr=chronic>0?(acute/chronic):0;
+                  const zone=acwr===0?{l:'\u2014',c:'var(--n400)',bg:'var(--n50)',txt:'Pas assez de données'}:acwr<0.8?{l:'Sous-charge',c:'var(--blue)',bg:'var(--blues)',txt:'Charge faible — marge de progression'}:acwr<=1.3?{l:'Optimal',c:'var(--green)',bg:'var(--greens)',txt:'Zone idéale — risque minimal'}:acwr<=1.5?{l:'Vigilance',c:'var(--amber)',bg:'var(--ambers)',txt:'Charge élevée — surveiller la fatigue'}:{l:'Risque élevé',c:'var(--red)',bg:'var(--reds)',txt:'Pic de charge — risque de blessure accru'};
+                  // 14 derniers jours pour le graphe
+                  const days=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);return d.toISOString().slice(0,10);});
+                  const dayCharge=days.map(d=>doneS.filter(s=>s.date===d).reduce((a,s)=>a+s.charge,0));
+                  const maxC=Math.max(...dayCharge,1);
+                  const weekCharge=doneS.filter(s=>dayDiff(s.date)>=0&&dayDiff(s.date)<7).reduce((a,s)=>a+s.charge,0);
+                  return(
+                    <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:'18px 20px',boxShadow:'var(--sh-sm)'}}>
+                      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,flexWrap:'wrap',gap:10}}>
+                        <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:15,color:'var(--n900)'}}>Charge d'entraînement & risque</div>
+                        <span style={{fontSize:11.5,color:'var(--n400)'}}>14 derniers jours · unités arbitraires (UA)</span>
+                      </div>
+                      <div style={{display:'grid',gridTemplateColumns:'200px 1fr',gap:20,alignItems:'center'}}>
+                        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+                          <div style={{padding:'14px 16px',background:zone.bg,borderRadius:'var(--rlg)'}}>
+                            <div style={{fontSize:10.5,fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:zone.c,marginBottom:6}}>Ratio ACWR</div>
+                            <div style={{display:'flex',alignItems:'baseline',gap:8}}>
+                              <span style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:30,color:zone.c,lineHeight:1}}>{acwr?acwr.toFixed(2):'—'}</span>
+                              <span style={{fontSize:13,fontWeight:700,color:zone.c}}>{zone.l}</span>
+                            </div>
+                            <div style={{fontSize:11.5,color:'var(--n600)',marginTop:6,lineHeight:1.4}}>{zone.txt}</div>
+                          </div>
+                          <div style={{display:'flex',gap:8}}>
+                            <div style={{flex:1,padding:'9px 12px',background:'var(--n50)',borderRadius:'var(--rmd)'}}>
+                              <div style={{fontSize:10,fontWeight:700,letterSpacing:'.05em',textTransform:'uppercase',color:'var(--n400)'}}>7 jours</div>
+                              <div style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:15,color:'var(--n900)'}}>{weekCharge}</div>
+                            </div>
+                            <div style={{flex:1,padding:'9px 12px',background:'var(--n50)',borderRadius:'var(--rmd)'}}>
+                              <div style={{fontSize:10,fontWeight:700,letterSpacing:'.05em',textTransform:'uppercase',color:'var(--n400)'}}>Moy. 4 sem</div>
+                              <div style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:15,color:'var(--n900)'}}>{Math.round(chronic)}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{display:'flex',alignItems:'flex-end',gap:4,height:120,paddingLeft:6}}>
+                          {dayCharge.map((c,i)=>{
+                            const h=Math.max(2,(c/maxC)*104);
+                            const dd=new Date(days[i]+'T12:00');
+                            const isToday=dayDiff(days[i])===0;
+                            return(
+                              <div key={i} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                                <div title={`${c} UA`} style={{width:'100%',maxWidth:22,height:h,borderRadius:4,background:c>0?'var(--v)':'var(--n100)',opacity:i>=7?1:.45}}/>
+                                <span style={{fontSize:8.5,color:isToday?'var(--v)':'var(--n400)',fontFamily:'var(--fm)',fontWeight:isToday?700:400}}>{dd.getDate()}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <div style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--n100)',fontSize:11,color:'var(--n400)',lineHeight:1.5}}>
+                        <strong style={{color:'var(--n500)'}}>ACWR</strong> = charge des 7 derniers jours ÷ moyenne hebdo des 4 dernières semaines. Zone optimale 0,8–1,3 (Gabbett 2016). Au-delà de 1,5 : risque de blessure significativement accru.
+                      </div>
+                    </div>
+                  );
+                })()}
+                  </>}
+                <IFTTestsCard cId={cId} client={client}/>
+                {byType.length>0&&(
+                  <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:'18px 20px',boxShadow:'var(--sh-sm)'}}>
+                    <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:15,color:'var(--n900)',marginBottom:14}}>Répartition par type</div>
+                    <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+                      {byType.map(t=>(
+                        <div key={t.key} style={{flex:1,minWidth:100,display:'flex',flexDirection:'column',gap:6,padding:'12px 14px',background:t.soft,borderRadius:'var(--rlg)',borderLeft:`3px solid ${t.color}`}}>
+                          <span style={{fontSize:12,fontWeight:700,color:t.color}}>{t.label}</span>
+                          <span style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:22,color:'var(--n900)',lineHeight:1}}>{t.count}</span>
+                          <span style={{fontSize:11,color:'var(--n500)'}}>{Math.round((t.count/sessions.length)*100)}% du total</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',boxShadow:'var(--sh-sm)',overflow:'hidden'}}>
+                  <div style={{padding:'14px 20px',borderBottom:'1px solid var(--n100)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                    <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:15,color:'var(--n900)'}}>Historique</div>
+                    <Btn size="sm" variant="secondary" icon="file-text" onClick={()=>setReportOpen(true)}>Rapport PDF</Btn>
+                  </div>
+                  {[...sessions].sort((a,b)=>b.date.localeCompare(a.date)).map((s,i)=>{
+                    const t=TYPES[s.type]||TYPES.force;
+                    const SS={'done':{bg:'var(--greens)',fg:'var(--green)',l:'Réalisée'},'missed':{bg:'var(--reds)',fg:'var(--red)',l:'Manquée'},'upcoming':{bg:'var(--n50)',fg:'var(--n500)',l:'À venir'}};
+                    const st=SS[s.status]||SS.upcoming;
+                    return(
+                      <div key={s.id} style={{display:'flex',alignItems:'center',gap:14,padding:'11px 20px',borderBottom:i<sessions.length-1?'1px solid var(--n50)':'none'}}>
+                        <div style={{fontFamily:'var(--fm)',fontSize:12,color:'var(--n500)',width:80,flexShrink:0}}>{new Date(s.date+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</div>
+                        <div style={{flex:1}}><div style={{fontSize:13.5,fontWeight:600,color:'var(--n900)'}}>{s.title||t.label}</div><div style={{fontSize:11.5,color:'var(--n400)',marginTop:1}}>{(s.durH||1)<1?(s.durH||1)*60+' min':(s.durH||1)+'h'}</div></div>
+                        <Tag type={s.type}/>
+                        <span style={{fontSize:11.5,fontWeight:600,color:st.fg,background:st.bg,padding:'2px 9px',borderRadius:'var(--rpill)'}}>{st.l}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+          }
+          {reportOpen&&client&&(
+            <Modal open={reportOpen} onClose={()=>setReportOpen(false)} title={`Rapport — ${client.name}`} width={860}
+              footer={<><Btn variant="ghost" onClick={()=>setReportOpen(false)}>Fermer</Btn><Btn icon="printer" onClick={printReport}>Imprimer / PDF</Btn></>}>
+              <AthleteReport client={client} sessions={sessions} tarifs={state.tarifs}/>
+            </Modal>
+          )}
+        </>)
+      }
+    </div>
+  );
+}
+
+/* ── FINANCES ── */
+function FinancesScreen(){
+  const {state,updateTarif,addTarif,deleteTarif,addPaiement,updatePaiement}=useStore();
+  const [tab,setTab]=React.useState('tarifs');
+  const [ntOpen,setNtOpen]=React.useState(false);
+  const [nt,setNt]=React.useState({label:'',format:'',prix:'',unite:'séance',color:'#7733dd',active:true});
+  const [npOpen,setNpOpen]=React.useState(false);
+  const [np,setNp]=React.useState({clientId:'',tarifId:'',tarifLabel:'',montant:'',date:new Date().toISOString().slice(0,10),echeance:'',statut:'en attente',mode:'Virement'});
+  const fmt=n=>new Intl.NumberFormat('fr-FR').format(n||0)+' €';
+  const totalPercu=state.paiements.filter(p=>p.statut==='payé').reduce((a,p)=>a+Number(p.montant||0),0);
+  const totalAttente=state.paiements.filter(p=>p.statut!=='payé').reduce((a,p)=>a+Number(p.montant||0),0);
+  const SS={'payé':{bg:'var(--greens)',fg:'var(--green)'},'en attente':{bg:'var(--ambers)',fg:'var(--amber)'},'en retard':{bg:'var(--reds)',fg:'var(--red)'}};
+  return(
+    <div style={{display:'flex',flexDirection:'column',gap:20,maxWidth:1280}}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14}}>
+        <Kpi label="CA perçu" val={fmt(totalPercu)} icon="trending-up" accent="var(--v)"/>
+        <Kpi label="En attente / retard" val={fmt(totalAttente)} icon="clock" accent="var(--amber)"/>
+        {(()=>{
+          const now=new Date();
+          const ym=now.toISOString().slice(0,7);
+          const projMois=state.paiements.filter(p=>p.date&&p.date.startsWith(ym)).reduce((a,p)=>a+Number(p.montant||0),0);
+          const sessCount=state.sessions.filter(s=>s.date&&s.date.startsWith(ym)).length;
+          return <Kpi label={`Revenu projeté — ${now.toLocaleDateString('fr-FR',{month:'long'})}`} val={fmt(projMois)} icon="target" accent="var(--teal)" delta={`${sessCount} séance${sessCount>1?'s':''} planifiée${sessCount>1?'s':''}`} up/>;
+        })()}
+      </div>
+      <div style={{display:'flex',gap:4,borderBottom:'1px solid var(--n150)'}}>
+        {[['tarifs','Mes tarifs'],['paiements','Paiements'],['outils','Outils']].map(([k,l])=>(
+          <button key={k} onClick={()=>setTab(k)} style={{position:'relative',padding:'10px 14px',border:'none',background:'transparent',cursor:'pointer',fontFamily:'var(--fb)',fontSize:14,fontWeight:tab===k?600:500,color:tab===k?'var(--n900)':'var(--n500)',transition:'var(--tr)'}}>
+            {l}{tab===k&&<span style={{position:'absolute',left:7,right:7,bottom:-1,height:2,borderRadius:2,background:'var(--v)'}}/>}
+          </button>
+        ))}
+      </div>
+      {tab==='tarifs'&&(
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <div style={{display:'flex',justifyContent:'flex-end'}}><Btn size="sm" onClick={()=>setNtOpen(true)} icon="plus">Nouveau tarif</Btn></div>
+          {state.tarifs.map(t=>(
+            <div key={t.id} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rlg)',opacity:t.active?1:.5,boxShadow:'var(--sh-sm)'}}>
+              <span style={{width:10,height:10,borderRadius:3,background:t.color,flexShrink:0}}/>
+              <div style={{flex:1}}><div style={{fontSize:14,fontWeight:600,color:'var(--n900)'}}>{t.label}</div><div style={{fontSize:12,color:'var(--n500)'}}>{t.format}</div></div>
+              <div style={{textAlign:'right',marginRight:14}}><div style={{fontFamily:'var(--fm)',fontSize:18,fontWeight:700,color:'var(--n900)'}}>{fmt(t.prix)}</div><div style={{fontSize:11,color:'var(--n400)'}}>/ {t.unite}</div></div>
+              <span onClick={()=>updateTarif(t.id,{active:!t.active})} style={{width:34,height:19,borderRadius:99,background:t.active?'var(--v)':'var(--n300)',position:'relative',display:'inline-block',cursor:'pointer',transition:'var(--tr)',flexShrink:0}}>
+                <span style={{position:'absolute',top:2.5,left:t.active?17:2.5,width:14,height:14,borderRadius:'50%',background:'#fff',boxShadow:'var(--sh-sm)',transition:'left 160ms cubic-bezier(.34,1.56,.64,1)'}}/>
+              </span>
+              <button onClick={()=>{if(confirm(`Supprimer le tarif "${t.label}" ?`))deleteTarif(t.id);}} style={{border:'none',background:'transparent',padding:4,cursor:'pointer',borderRadius:'var(--rsm)',marginLeft:2}}><Icon n="trash-2" s={14} c="var(--n300)"/></button>
+            </div>
+          ))}
+          <Modal open={ntOpen} onClose={()=>setNtOpen(false)} title="Nouveau tarif" width={420}
+            footer={<><Btn variant="ghost" onClick={()=>setNtOpen(false)}>Annuler</Btn><Btn onClick={()=>{addTarif(nt);setNtOpen(false);setNt({label:'',format:'',prix:'',unite:'séance',color:'#7733dd',active:true});}}>Ajouter</Btn></>}>
+            <div style={{display:'flex',flexDirection:'column',gap:12}}>
+              <Field label="Nom"><FInput value={nt.label} onChange={e=>setNt(n=>({...n,label:e.target.value}))} placeholder="Séance individuelle"/></Field>
+              <Field label="Description"><FInput value={nt.format} onChange={e=>setNt(n=>({...n,format:e.target.value}))} placeholder="Présentiel · 1h"/></Field>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                <Field label="Prix (€)"><FInput type="number" value={nt.prix} onChange={e=>setNt(n=>({...n,prix:e.target.value}))} placeholder="75"/></Field>
+                <Field label="Unité"><FInput value={nt.unite} onChange={e=>setNt(n=>({...n,unite:e.target.value}))} placeholder="séance"/></Field>
+              </div>
+            </div>
+          </Modal>
+        </div>
+      )}
+      {tab==='paiements'&&(
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <div style={{display:'flex',justifyContent:'flex-end'}}><Btn size="sm" onClick={()=>setNpOpen(true)} icon="plus">Enregistrer un paiement</Btn></div>
+          {state.paiements.length===0
+            ?<Empty icon="banknote" title="Aucun paiement" sub="Enregistrez vos paiements pour suivre votre trésorerie." action={<Btn size="sm" onClick={()=>setNpOpen(true)} icon="plus">Ajouter</Btn>}/>
+            :<div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',overflow:'hidden',boxShadow:'var(--sh-sm)'}}>
+              <table style={{width:'100%',borderCollapse:'collapse',fontFamily:'var(--fb)',fontSize:13}}>
+                <thead><tr style={{background:'var(--n50)'}}>
+                  {['Athlète','Prestation','Montant','Date','Mode','Statut',''].map((h,i)=>(
+                    <th key={i} style={{padding:'9px 14px',textAlign:i>=2&&i<=4?'center':'left',fontSize:11,fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--n400)',borderBottom:'1px solid var(--n150)',whiteSpace:'nowrap'}}>{h}</th>
+                  ))}
+                </tr></thead>
+                <tbody>
+                  {[...state.paiements].sort((a,b)=>b.date.localeCompare(a.date)).map((p,i)=>{
+                    const c=state.clients.find(x=>x.id===p.clientId);
+                    const ss=SS[p.statut]||SS['en attente'];
+                    return(
+                      <tr key={p.id} style={{borderBottom:i<state.paiements.length-1?'1px solid var(--n50)':'none'}}>
+                        <td style={{padding:'10px 14px'}}>{c?<div style={{display:'flex',alignItems:'center',gap:8}}><Avatar name={c.name} size={28}/><span style={{fontWeight:600,color:'var(--n900)'}}>{c.name}</span></div>:<span style={{color:'var(--n400)'}}>—</span>}</td>
+                        <td style={{padding:'10px 14px',color:'var(--n500)',fontSize:12}}>{p.tarifLabel||'—'}</td>
+                        <td style={{padding:'10px 14px',textAlign:'center',fontFamily:'var(--fm)',fontWeight:700,color:'var(--n900)'}}>{fmt(p.montant)}</td>
+                        <td style={{padding:'10px 14px',textAlign:'center',fontFamily:'var(--fm)',fontSize:12,color:'var(--n500)'}}>{p.date}</td>
+                        <td style={{padding:'10px 14px',textAlign:'center'}}><span style={{background:'var(--n50)',borderRadius:4,padding:'2px 8px',fontSize:11.5,fontWeight:600,color:'var(--n500)'}}>{p.mode}</span></td>
+                        <td style={{padding:'10px 14px'}}><span style={{display:'inline-flex',alignItems:'center',gap:4,padding:'2px 9px',borderRadius:99,background:ss.bg,fontSize:11.5,fontWeight:700,color:ss.fg}}><span style={{width:5,height:5,borderRadius:'50%',background:ss.fg}}/>{p.statut}</span></td>
+                        <td style={{padding:'10px 14px'}}>{p.statut!=='payé'&&<button onClick={()=>updatePaiement(p.id,{statut:'payé'})} style={{border:'none',background:'transparent',cursor:'pointer',color:'var(--green)',fontFamily:'var(--fb)',fontSize:11.5,fontWeight:600,display:'flex',alignItems:'center',gap:3}}><Icon n="check" s={13} c="var(--green)"/>Payé</button>}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          }
+          <Modal open={npOpen} onClose={()=>setNpOpen(false)} title="Enregistrer un paiement" width={440}
+            footer={<><Btn variant="ghost" onClick={()=>setNpOpen(false)}>Annuler</Btn><Btn onClick={()=>{addPaiement(np);setNpOpen(false);}}>Enregistrer</Btn></>}>
+            <div style={{display:'flex',flexDirection:'column',gap:12}}>
+              <Field label="Athlète">
+                <FSel value={np.clientId} onChange={e=>setNp(n=>({...n,clientId:e.target.value}))}>
+                  <option value="">— Sélectionner —</option>
+                  {state.clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
+                </FSel>
+              </Field>
+              <Field label="Prestation">
+                <FSel value={np.tarifId} onChange={e=>{const t=state.tarifs.find(x=>x.id===e.target.value);setNp(n=>({...n,tarifId:e.target.value,tarifLabel:t?.label||'',montant:t?.prix||n.montant}));}}>
+                  <option value="">— Choisir —</option>
+                  {state.tarifs.filter(t=>t.active).map(t=><option key={t.id} value={t.id}>{t.label} — {fmt(t.prix)}</option>)}
+                </FSel>
+              </Field>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                <Field label="Montant (€)"><FInput type="number" value={np.montant} onChange={e=>setNp(n=>({...n,montant:e.target.value}))} placeholder="75"/></Field>
+                <Field label="Mode">
+                  <FSel value={np.mode} onChange={e=>setNp(n=>({...n,mode:e.target.value}))}>
+                    {['Virement','CB','Stripe','SumUp','Espèces','Chèque'].map(m=><option key={m} value={m}>{m}</option>)}
+                  </FSel>
+                </Field>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+                <Field label="Date"><FInput type="date" value={np.date} onChange={e=>setNp(n=>({...n,date:e.target.value}))}/></Field>
+                <Field label="Statut">
+                  <FSel value={np.statut} onChange={e=>setNp(n=>({...n,statut:e.target.value}))}>
+                    {['payé','en attente','en retard'].map(s=><option key={s} value={s}>{s}</option>)}
+                  </FSel>
+                </Field>
+              </div>
+            </div>
+          </Modal>
+        </div>
+      )}
+      {tab==='outils'&&(
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          {OUTILS.map((o,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:14,padding:'14px 18px',background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',boxShadow:'var(--sh-sm)'}}>
+              <div style={{flex:1}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:3}}>
+                  <span style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:16,color:'var(--n900)'}}>{o.nom}</span>
+                  <span style={{fontSize:11,fontWeight:600,color:'var(--v)',background:'var(--vs)',borderRadius:'var(--rpill)',padding:'1px 9px'}}>{o.cat}</span>
+                </div>
+                <div style={{fontSize:13.5,color:'var(--n700)',marginBottom:2}}>{o.desc}</div>
+                <div style={{fontSize:12,color:'var(--n400)',fontFamily:'var(--fm)'}}>{o.tarif}</div>
+              </div>
+              <a href={o.url} target="_blank" rel="noreferrer" style={{textDecoration:'none'}}><Btn variant="secondary" size="sm" iconR="arrow-up-right">Voir</Btn></a>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── DONNÉES SCIENTIFIQUES ── */
+const FORFAITS=[
+  {
+    id:'base',nom:'Base Football',semaines:4,joursParSem:3,niveau:'Débutant',prix:280,
+    description:'Construire les fondations physiques pour jouer au football. Aérobie, renforcement général, technique de base.',
+    science:'Périodisation linéaire (Bompa). Développement aérobie général (60–70% FCmax), renforcement fonctionnel, prévention blessures FIFA 11+.',
+    couleur:'#2f6bf2',
+    objectifs:['Base aérobie (VMA +5–10%)','Force générale membres inférieurs','Prévention (ischio-jambiers, chevilles)','Technique de course et gestuelle football'],
+    tests:[{sem:0,nom:'Yo-Yo IR1 Niveau 1',desc:'Test progressif navette 20m'},{sem:0,nom:'Sprint 30m',desc:'Vitesse linéaire maximale'},{sem:0,nom:'Gainage ventral',desc:'Tenue isométrique — seuil 2 min'},{sem:4,nom:'Re-tests complets',desc:'Mesure des progressions'}],
+    microcycle:[
+      {jour:1,type:'force',titre:'Renforcement général + FIFA 11+',duree:1,rpe:6,contenu:'Échauffement FIFA 11+ (20 min) · Squat gobelet 3x12 · Fentes marchées 3x10 · Nordic curl 3x6 · Gainage 3x45s'},
+      {jour:3,type:'cardio',titre:'Aérobie continu + jeux de position',duree:1.25,rpe:7,contenu:'Course continue Z2 20 min (65–70% FCmax) · Jeu de position 4v4 (6x3 min) · Circuit technique balle · Retour calme'},
+      {jour:5,type:'technique',titre:'Vitesse de déplacement + technique',duree:1,rpe:6,contenu:'Technique de course 6x20m · Accélérations 6x30m · Circuits techniques balle · Mobilité articulaire'},
+    ],
+    progressionNotes:'S1–2 : charges légères, appui technique. S3 : +10% volume. S4 : décharge −20% + re-tests.',
+  },
+  {
+    id:'developpement',nom:'Développement Performance',semaines:8,joursParSem:4,niveau:'Intermédiaire',prix:520,
+    description:'Améliorer les qualités physiques spécifiques : vitesse, puissance, endurance intermittente.',
+    science:'Buchheit & Laursen (HIIT football), Nordic Hamstring Protocol (Petersen 2011 — −50% blessures ischio), répétition de sprints (RSA).',
+    couleur:'#7733dd',
+    objectifs:['VO2max +8–12% (HIIT 90–95% FCmax)','Vitesse maximale (Vmax +3–5%)','Réduction blessures ischio −50%','Capacité répétition sprints (RSA)'],
+    tests:[{sem:0,nom:'Yo-Yo IR2',desc:'Capacité intermittente haute intensité'},{sem:0,nom:'Sprint 10m/30m',desc:'Accélération et vitesse max'},{sem:0,nom:'CMJ',desc:'Counter-Movement Jump — puissance explosive'},{sem:4,nom:'Tests intermédiaires',desc:'Bilan mi-programme'},{sem:8,nom:'Bilan final complet',desc:'Toutes progressions'}],
+    microcycle:[
+      {jour:1,type:'force',titre:'Force-puissance + prévention',duree:1.25,rpe:8,contenu:'Nordic curl 3x8 (Petersen) · RDL bulgare 3x8/j · Box jump 4x5 · Hip thrust 3x10 · Circuit proprioception'},
+      {jour:2,type:'cardio',titre:'HIIT 15-15 (Buchheit)',duree:1,rpe:9,contenu:'Échauffement 15 min · 15s à 95% Vmax / 15s récup x 25 rép · Jeux 3v3 haute intensité · Retour calme'},
+      {jour:4,type:'technique',titre:'Vitesse + technique football',duree:1.25,rpe:7,contenu:'Sprint technique fréquence/amplitude · Sprints résistés harness 6x30m · 5-0-5 agilité · Circuits balle + sprint'},
+      {jour:6,type:'cardio',titre:'RSA + jeu conditionné',duree:1.5,rpe:8,contenu:'RSA 6x30m (récup 30s) x 4 séries · Jeu 8v8 (2x15 min) · Travail spécifique poste'},
+    ],
+    progressionNotes:'Blocs 3 sem progressives + 1 sem décharge. +2 rép HIIT/sem. Contrôle RPE hebdomadaire.',
+  },
+  {
+    id:'elite',nom:'Périodisation Tactique Élite',semaines:12,joursParSem:5,niveau:'Avancé',prix:860,
+    description:'Le système des plus grands clubs (Mourinho, Guardiola). Physique et tactique sont indissociables.',
+    science:'Périodisation Tactique de Vítor Frade (1982). Morphocycle standard : lundi récup, mardi acquisition, mercredi tension max, jeudi endurance, vendredi activation pré-match. Principe de spécificité maximale (Verheijen).',
+    couleur:'#131017',
+    objectifs:['Intégration totale physique-tactique','Morphocycle spécifique football','Modulation charge selon distance match','Adaptation poste (D/M/A)','Performance de match optimisée'],
+    tests:[{sem:0,nom:'Profil GPS simulé',desc:'Sprint max, HI Distance, acc/déc'},{sem:0,nom:'Yo-Yo IR2 + RSA',desc:'6x30m, mesure déclin %'},{sem:0,nom:'FMS Screen',desc:'7 patterns fondamentaux'},{sem:4,nom:'Bilan intermédiaire',desc:'Ajustement'},{sem:8,nom:'Mi-parcours',desc:'Réorientation si besoin'},{sem:12,nom:'Bilan final élite',desc:'Rapport pour club/agent'}],
+    microcycle:[
+      {jour:1,type:'recovery',titre:'Récupération active (Lundi)',duree:0.75,rpe:3,contenu:'Bain froid/contraste · Mobilité active 20 min · Travail positionnel léger · Automassage · Vidéo tactique'},
+      {jour:2,type:'technique',titre:'Acquisition qualitative (Mardi)',duree:1.5,rpe:7,contenu:'Rondos · Jeux de position + pressing · 11v11 intensité contrôlée · Combinaisons physique-technique poste · Plyométrie'},
+      {jour:3,type:'force',titre:'Tension maximale (Mercredi)',duree:1.25,rpe:9,contenu:'Nordic 3x6 · Force max squat/RDL · Sprints max 8x15m · HIIT 10-10 x15 rép · Jeux réduits 2v2 haute intensité'},
+      {jour:4,type:'cardio',titre:'Endurance soutenue (Jeudi)',duree:1.5,rpe:7,contenu:'Jeux de position grand espace Z3 (80–85% FCmax) · 10v10 conditionné · 25 min cumulé aérobie balle'},
+      {jour:5,type:'technique',titre:'Activation pré-match (Vendredi)',duree:0.75,rpe:5,contenu:'FIFA 11+ · Vitesses courtes 4x10m · Technique passes/finitions · Jeu réduit faible intensité'},
+    ],
+    progressionNotes:'S1–4 : mise en place morphocycle. S5–8 : montée intensité. S9–12 : optimisation et affûtage. Charge modulée si match <72h.',
+  },
+  {
+    id:'preseason',nom:'Pré-saison Football',semaines:6,joursParSem:5,niveau:'Tous niveaux',prix:420,
+    description:'6 semaines structurées avant la reprise. Volume élevé → intensité croissante → spécificité match.',
+    science:'Recommandations UEFA/FIFA (Impellizzeri 2006). Phase 1 aérobie (VMA), Phase 2 force-vitesse, Phase 3 intégration tactique. Volume décroissant, intensité croissante.',
+    couleur:'#f5631e',
+    objectifs:['VMA +10% en 6 semaines','Masse musculaire fonctionnelle +3–5%','Prévention (FMS + Nordic)','Automatismes collectifs','Condition optimale à J0'],
+    tests:[{sem:0,nom:'Yo-Yo IR1 niv.2',desc:'Référence pré-saison'},{sem:0,nom:'Bilan morphologique',desc:'Poids, % masse grasse, force'},{sem:3,nom:'Tests mi-camp',desc:'Progression VMA/force'},{sem:6,nom:'Tests finaux',desc:'Prêt pour la comp ?'}],
+    microcycle:[
+      {jour:1,type:'cardio',titre:'Aérobie extensif + renforcement',duree:1.5,rpe:6,contenu:'Z2 30 min · Renforcement corps entier · Étirements actifs · FIFA 11+'},
+      {jour:2,type:'force',titre:'Force fonctionnelle + prévention',duree:1.25,rpe:7,contenu:'Squat 4x8 · Nordic curl 3x6 · Box jump 3x5 · Core stability · Proprioception'},
+      {jour:3,type:'technique',titre:'Technique + vitesse',duree:1.25,rpe:7,contenu:'Technique sprint · Accélérations 8x20m · Changements direction · Circuits balle'},
+      {jour:4,type:'cardio',titre:'HIIT + jeu conditionné',duree:1.5,rpe:8,contenu:'HIIT 30-30 x15 rép · 8v8 haute intensité · RSA fin de séance'},
+      {jour:5,type:'recovery',titre:'Récupération + technique légère',duree:1,rpe:4,contenu:'Mobilité · Technique balle légère · Vidéo tactique'},
+    ],
+    progressionNotes:'Ph1 (S1–2) : fondations. Ph2 (S3–4) : +15% intensité. Ph3 (S5–6) : simulation match. S6 : décharge obligatoire.',
+  },
+  {
+    id:'inseason',nom:'Maintenance In-Saison',semaines:16,joursParSem:2,niveau:'Tous niveaux',prix:380,
+    description:'Maintenir les qualités pendant la compétition. 2 séances/sem adaptées au calendrier.',
+    science:'Ronnestad 2012 : 2x/sem maintient les gains. Récupération post-match (Kellmann). Ajustement charge selon congestion calendrier.',
+    couleur:'#0f9d8a',
+    objectifs:['Maintien VMA et force','Récupération optimale inter-matchs','Prévention blessures de fatigue','Pic de forme sur matchs clés'],
+    tests:[{sem:0,nom:'Bilan de forme initiale',desc:'Référence début saison'},{sem:8,nom:'Bilan mi-saison',desc:'Ajustement'},{sem:16,nom:'Bilan fin de saison',desc:'Analyse complète'}],
+    microcycle:[
+      {jour:2,type:'force',titre:'J+2 Post-match : force-prévention',duree:1,rpe:6,contenu:'Nordic curl 3x6 (Petersen) · Squat unilatéral 3x8 · Plyométrie légère 3x5 · Core · Mobilité'},
+      {jour:4,type:'cardio',titre:'J+4 : Entretien aérobie + vivacité',duree:1,rpe:7,contenu:'HIIT 10-10 x15 rép · Sprints 6x15m · Jeu technique réduit · Activation neuromusculaire'},
+    ],
+    progressionNotes:'2 matchs en 1 sem : supprimer J+4. Congestion : 1 séance récup seulement.',
+  },
+];
+
+/* ── ÉCRAN PROGRAMMES ── */
+function ProgramsScreen(){
+  const {state,addSession}=useStore();
+  const [selected,setSelected]=React.useState(null);
+  const [step,setStep]=React.useState(1); // 1=liste, 2=detail, 3=preview
+  const [cfg,setCfg]=React.useState({clientIds:[],startDate:new Date().toISOString().slice(0,10)});
+  const [assigned,setAssigned]=React.useState(false);
+  const [editOpen,setEditOpen]=React.useState(false);
+  const [editForfait,setEditForfait]=React.useState(null);
+  const [customForfaits,setCustomForfaits]=React.useState(()=>{
+    try{return JSON.parse(localStorage.getItem('pb-custom-forfaits')||'[]');}catch{return[];}
+  });
+
+  const saveCustom=(list)=>{
+    setCustomForfaits(list);
+    localStorage.setItem('pb-custom-forfaits',JSON.stringify(list));
+  };
+
+  const allForfaits=[...FORFAITS,...customForfaits];
+  const forfait=allForfaits.find(f=>f.id===selected)||null;
+
+  const preview=React.useMemo(()=>{
+    if(!forfait||!cfg.startDate) return [];
+    const start=new Date(cfg.startDate+'T12:00');
+    const sessions=[];
+    for(let w=0;w<forfait.semaines;w++){
+      (forfait.microcycle||[]).forEach(m=>{
+        const d=new Date(start);
+        d.setDate(start.getDate()+w*7+(m.jour-1));
+        sessions.push({
+          date:d.toISOString().slice(0,10),startH:9,durH:m.duree||1,
+          type:m.type||'force',title:m.titre||'',notes:m.contenu||'',
+          participants:cfg.clientIds.map(cId=>({clientId:cId,tarifId:''})),
+          _week:w+1,_rpe:m.rpe||7,
+        });
+      });
+    }
+    return sessions;
+  },[forfait,cfg]);
+
+  const assign=()=>{preview.forEach(s=>addSession(s));setAssigned(true);};
+  const reset=()=>{setSelected(null);setStep(1);setCfg({clientIds:[],startDate:new Date().toISOString().slice(0,10)});setAssigned(false);};
+  const openEdit=(f)=>{setEditForfait(f?JSON.parse(JSON.stringify(f)):{id:'c-'+Date.now(),nom:'',semaines:4,joursParSem:3,niveau:'Personnalisé',prix:0,description:'',science:'',couleur:'#7733dd',objectifs:[''],tests:[{sem:0,nom:'Test initial',desc:''}],microcycle:[{jour:1,type:'force',titre:'',duree:1,rpe:7,contenu:''}],progressionNotes:''});setEditOpen(true);};
+  const saveEdit=()=>{
+    const list=customForfaits.filter(f=>f.id!==editForfait.id);
+    saveCustom([...list,editForfait]);
+    setEditOpen(false);
+  };
+  const deleteCustom=(id)=>{if(confirm('Supprimer ce programme ?'))saveCustom(customForfaits.filter(f=>f.id!==id));};
+
+  const Tag2=({label,color})=><span style={{fontSize:11,fontWeight:600,padding:'2px 9px',borderRadius:'var(--rpill)',background:color+'18',color}}>{label}</span>;
+
+  return(
+    <div style={{display:'flex',flexDirection:'column',gap:20,maxWidth:1280}}>
+      {/* ── STEP 1 : liste ── */}
+      {step===1&&(
+        <>
+          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:14,flexWrap:'wrap'}}>
+            <div>
+              <div style={{fontFamily:'var(--fbebas)',fontWeight:800,fontSize:22,color:'var(--n900)',letterSpacing:'-.02em',marginBottom:6}}>Programmes d'entraînement</div>
+              <div style={{fontSize:14,color:'var(--n500)',lineHeight:1.55}}>Basés sur : Périodisation Tactique (Vítor Frade), Verheijen, Buchheit & Laursen, Nordic Hamstring (Petersen 2011), FIFA 11+.</div>
+            </div>
+            <Btn icon="plus" onClick={()=>openEdit(null)}>Créer un programme</Btn>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16}}>
+            {allForfaits.map(f=>(
+              <div key={f.id} style={{background:'#fff',border:`2px solid var(--n150)`,borderRadius:'var(--rxl)',padding:20,boxShadow:'var(--sh-sm)',display:'flex',flexDirection:'column',gap:10}}>
+                <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
+                  <span style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:15,color:f.couleur||'var(--v)',lineHeight:1.2}}>{f.nom}</span>
+                  <div style={{display:'flex',gap:6,flexShrink:0}}>
+                    {customForfaits.find(c=>c.id===f.id)&&(
+                      <>
+                        <button onClick={e=>{e.stopPropagation();openEdit(f);}} style={{border:'none',background:'transparent',cursor:'pointer',padding:3}}><Icon n="pencil" s={14} c="var(--n400)"/></button>
+                        <button onClick={e=>{e.stopPropagation();deleteCustom(f.id);}} style={{border:'none',background:'transparent',cursor:'pointer',padding:3}}><Icon n="trash-2" s={14} c="var(--n300)"/></button>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div style={{display:'flex',gap:7,flexWrap:'wrap'}}>
+                  <Tag2 label={f.niveau} color={f.couleur||'var(--v)'}/>
+                  <span style={{fontSize:11,fontWeight:600,padding:'2px 9px',borderRadius:'var(--rpill)',background:'var(--n50)',color:'var(--n500)',border:'1px solid var(--n150)'}}>{f.semaines} sem · {f.joursParSem}j/sem</span>
+                  {f.prix>0&&<span style={{fontFamily:'var(--fm)',fontSize:11,fontWeight:700,padding:'2px 9px',borderRadius:'var(--rpill)',background:'var(--n50)',color:'var(--n900)',border:'1px solid var(--n150)'}}>{f.prix} €</span>}
+                </div>
+                <div style={{fontSize:12.5,color:'var(--n500)',lineHeight:1.55,flex:1}}>{f.description}</div>
+                <div style={{fontSize:11,color:'var(--n400)',fontStyle:'italic',borderTop:'1px solid var(--n100)',paddingTop:8,lineHeight:1.45}}>{(f.science||'').split('.')[0]}.</div>
+                <Btn onClick={()=>{setSelected(f.id);setStep(2);setAssigned(false);}} iconR="arrow-right" style={{marginTop:2}}>Voir le programme</Btn>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* ── STEP 2 : détail ── */}
+      {step===2&&forfait&&(
+        <div style={{display:'flex',flexDirection:'column',gap:16,maxWidth:900}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+            <div style={{display:'flex',alignItems:'center',gap:12}}>
+              <button onClick={()=>setStep(1)} style={{border:'none',background:'transparent',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:13,color:'var(--n500)',fontFamily:'var(--fb)'}}><Icon n="arrow-left" s={16} c="var(--n400)"/>Retour</button>
+              <div style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:19,color:forfait.couleur||'var(--v)'}}>{forfait.nom}</div>
+            </div>
+            {customForfaits.find(c=>c.id===forfait.id)&&<Btn size="sm" variant="secondary" icon="pencil" onClick={()=>openEdit(forfait)}>Modifier</Btn>}
+          </div>
+
+          {forfait.science&&(
+            <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:'16px 18px',boxShadow:'var(--sh-sm)'}}>
+              <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:14,color:'var(--n900)',marginBottom:10}}>Base scientifique & objectifs</div>
+              <div style={{fontSize:13,color:'var(--n700)',lineHeight:1.6,padding:'10px 14px',background:'var(--n50)',borderRadius:'var(--rlg)',borderLeft:`3px solid ${forfait.couleur||'var(--v)'}`,marginBottom:12}}>{forfait.science}</div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                {(forfait.objectifs||[]).filter(o=>o).map((o,i)=>(
+                  <div key={i} style={{display:'flex',gap:8,fontSize:13,color:'var(--n700)',alignItems:'flex-start'}}>
+                    <span style={{width:18,height:18,borderRadius:'50%',background:(forfait.couleur||'var(--v)')+'18',color:forfait.couleur||'var(--v)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:800,flexShrink:0,marginTop:1}}>{i+1}</span>{o}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:'16px 18px',boxShadow:'var(--sh-sm)'}}>
+            <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:14,color:'var(--n900)',marginBottom:12}}>Microcycle type (1 semaine)</div>
+            {(forfait.microcycle||[]).map((m,i)=>{
+              const t=TYPES[m.type]||TYPES.force;
+              return(
+                <div key={i} style={{display:'flex',gap:12,padding:'10px 14px',marginBottom:6,background:'var(--n50)',borderRadius:'var(--rlg)',borderLeft:`3px solid ${t.color}`}}>
+                  <div style={{flexShrink:0,width:34,textAlign:'center'}}>
+                    <div style={{fontFamily:'var(--fm)',fontWeight:700,fontSize:13,color:'var(--n900)'}}>J{m.jour}</div>
+                    <div style={{fontSize:10,color:'var(--n400)'}}>{(m.duree||1)<1?(m.duree||1)*60+'min':(m.duree||1)+'h'}</div>
+                  </div>
+                  <div style={{flex:1}}>
+                    <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:3,flexWrap:'wrap'}}>
+                      <span style={{fontWeight:700,fontSize:13.5,color:'var(--n900)'}}>{m.titre}</span>
+                      <span style={{fontSize:10.5,fontWeight:600,padding:'2px 7px',borderRadius:'var(--rpill)',background:t.soft,color:t.color}}>{t.label}</span>
+                      <span style={{fontSize:11,fontWeight:600,padding:'1px 7px',borderRadius:4,background:'var(--n100)',color:'var(--n500)',fontFamily:'var(--fm)'}}>RPE {m.rpe}</span>
+                    </div>
+                    <div style={{fontSize:12.5,color:'var(--n600,var(--n500))',lineHeight:1.55}}>{m.contenu}</div>
+                  </div>
+                </div>
+              );
+            })}
+            {forfait.progressionNotes&&<div style={{marginTop:6,fontSize:12.5,color:'var(--n700)',padding:'10px 14px',background:'var(--ambers)',borderRadius:'var(--rlg)',borderLeft:'3px solid var(--amber)'}}><strong>Progression :</strong> {forfait.progressionNotes}</div>}
+          </div>
+
+          {(forfait.tests||[]).length>0&&(
+            <div style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',padding:'16px 18px',boxShadow:'var(--sh-sm)'}}>
+              <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:14,color:'var(--n900)',marginBottom:12}}>Tests & évaluations</div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                {forfait.tests.map((t,i)=>(
+                  <div key={i} style={{padding:'10px 14px',background:'var(--n50)',borderRadius:'var(--rlg)',border:'1px solid var(--n150)'}}>
+                    <div style={{display:'flex',gap:7,alignItems:'center',marginBottom:3}}>
+                      <span style={{fontFamily:'var(--fm)',fontSize:10.5,fontWeight:700,color:'var(--v)',background:'var(--vs)',padding:'1px 6px',borderRadius:4}}>S{t.sem}</span>
+                      <span style={{fontSize:13,fontWeight:700,color:'var(--n900)'}}>{t.nom}</span>
+                    </div>
+                    <div style={{fontSize:12,color:'var(--n500)'}}>{t.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{background:'#fff',border:`2px solid ${forfait.couleur||'var(--v)'}`,borderRadius:'var(--rxl)',padding:'18px 20px'}}>
+            <div style={{fontFamily:'var(--fbebas)',letterSpacing:'.01em',fontWeight:700,fontSize:15,color:'var(--n900)',marginBottom:14}}>Assigner ce programme à des athlètes</div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:14}}>
+              <div>
+                <label style={{fontSize:13,fontWeight:600,color:'var(--n900)',display:'block',marginBottom:8}}>Athlètes</label>
+                {state.clients.length===0
+                  ?<div style={{fontSize:13,color:'var(--n400)',padding:'12px',background:'var(--n50)',borderRadius:'var(--rmd)',textAlign:'center'}}>Ajoutez d'abord des athlètes dans l'onglet Athlètes.</div>
+                  :state.clients.map(c=>{
+                    const on=cfg.clientIds.includes(c.id);
+                    return(
+                      <label key={c.id} style={{display:'flex',alignItems:'center',gap:10,cursor:'pointer',padding:'8px 12px',borderRadius:'var(--rmd)',marginBottom:6,background:on?'var(--vs)':'var(--n50)',border:`1px solid ${on?forfait.couleur||'var(--v)':'var(--n150)'}`,transition:'var(--tr)'}}>
+                        <input type="checkbox" checked={on} onChange={()=>setCfg(p=>({...p,clientIds:on?p.clientIds.filter(id=>id!==c.id):[...p.clientIds,c.id]}))} style={{accentColor:forfait.couleur||'var(--v)'}}/>
+                        <Avatar name={c.name} size={28}/>
+                        <div style={{flex:1}}>
+                          <div style={{fontSize:13.5,fontWeight:600,color:on?forfait.couleur||'var(--v)':'var(--n900)'}}>{c.name}</div>
+                          <div style={{fontSize:11,color:'var(--n400)'}}>{c.sport||c.level}</div>
+                        </div>
+                      </label>
+                    );
+                  })
+                }
+              </div>
+              <div>
+                <label style={{fontSize:13,fontWeight:600,color:'var(--n900)',display:'block',marginBottom:8}}>Date de début</label>
+                <input type="date" value={cfg.startDate} onChange={e=>setCfg(p=>({...p,startDate:e.target.value}))} style={{height:38,padding:'0 12px',border:'1px solid var(--n200)',borderRadius:'var(--rmd)',fontSize:14,width:'100%',fontFamily:'var(--fb)',outline:'none'}}/>
+                {cfg.startDate&&<div style={{fontSize:12,color:'var(--n500)',marginTop:6}}>Fin : {(()=>{const d=new Date(cfg.startDate+'T12:00');d.setDate(d.getDate()+forfait.semaines*7);return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});})()}</div>}
+                <div style={{marginTop:12,padding:'10px 12px',background:'var(--n50)',borderRadius:'var(--rmd)',fontSize:13,color:'var(--n700)'}}>
+                  <strong>{forfait.semaines * (forfait.microcycle||[]).length}</strong> séances seront créées dans votre calendrier.
+                  {cfg.clientIds.length>0&&<span style={{color:'var(--n400)'}}> Pour {cfg.clientIds.length} athlète{cfg.clientIds.length>1?'s':''}.</span>}
+                </div>
+              </div>
+            </div>
+            <div style={{display:'flex',gap:10,justifyContent:'flex-end'}}>
+              <Btn variant="secondary" onClick={()=>setStep(1)}>Retour</Btn>
+              <Btn onClick={()=>setStep(3)} iconR="arrow-right" style={{background:forfait.couleur||'var(--v)',border:'none',boxShadow:`0 2px 8px ${forfait.couleur||'#7733dd'}44`}}>Aperçu du planning</Btn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── STEP 3 : planning semaine par semaine ── */}
+      {step===3&&forfait&&(
+        <div style={{display:'flex',flexDirection:'column',gap:12,maxWidth:1100}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+            <div style={{display:'flex',alignItems:'center',gap:12}}>
+              <button onClick={()=>setStep(2)} style={{border:'none',background:'transparent',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:13,color:'var(--n500)',fontFamily:'var(--fb)'}}><Icon n="arrow-left" s={16} c="var(--n400)"/>Retour</button>
+              <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:17,color:'var(--n900)'}}>{forfait.nom} — {forfait.semaines} semaines · {preview.length} séances</div>
+            </div>
+            {!assigned
+              ?<Btn icon="calendar-plus" onClick={assign} style={{background:forfait.couleur||'var(--v)',border:'none',boxShadow:`0 2px 8px ${forfait.couleur||'#7733dd'}44`}}>Assigner au calendrier</Btn>
+              :<div style={{display:'flex',alignItems:'center',gap:10}}>
+                <span style={{fontSize:13,fontWeight:600,color:'var(--green)',display:'flex',alignItems:'center',gap:6}}><Icon n="check-circle" s={16} c="var(--green)"/>{preview.length} séances ajoutées !</span>
+                <Btn variant="secondary" onClick={reset}>Nouveau programme</Btn>
+              </div>
+            }
+          </div>
+          {Array.from({length:forfait.semaines},(_,w)=>{
+            const ws=preview.filter(s=>s._week===w+1);
+            return(
+              <div key={w} style={{background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rxl)',overflow:'hidden',boxShadow:'var(--sh-sm)'}}>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'9px 16px',background:'var(--n50)',borderBottom:'1px solid var(--n100)'}}>
+                  <span style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:13.5,color:'var(--n900)'}}>Semaine {w+1}</span>
+                  {ws[0]?.date&&<span style={{fontSize:11.5,color:'var(--n400)',fontFamily:'var(--fm)'}}>{new Date(ws[0].date+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})} – {ws[ws.length-1]?.date&&new Date(ws[ws.length-1].date+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>}
+                </div>
+                {ws.map((s,i)=>{
+                  const t=TYPES[s.type]||TYPES.force;
+                  return(
+                    <div key={i} style={{display:'flex',alignItems:'center',gap:12,padding:'9px 16px',borderBottom:i<ws.length-1?'1px solid var(--n50)':'none'}}>
+                      <div style={{fontFamily:'var(--fm)',fontSize:11.5,color:'var(--n500)',width:90,flexShrink:0}}>{new Date(s.date+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}</div>
+                      <div style={{flex:1,minWidth:0}}><div style={{fontSize:13.5,fontWeight:600,color:'var(--n900)'}}>{s.title}</div><div style={{fontSize:11.5,color:'var(--n400)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{s.notes}</div></div>
+                      <span style={{fontSize:10.5,fontWeight:600,padding:'2px 8px',borderRadius:'var(--rpill)',background:t.soft,color:t.color,whiteSpace:'nowrap'}}>{t.label}</span>
+                      <span style={{fontSize:11,fontWeight:600,padding:'2px 8px',borderRadius:4,background:'var(--n50)',color:'var(--n400)',fontFamily:'var(--fm)',border:'1px solid var(--n150)',whiteSpace:'nowrap'}}>RPE {s._rpe}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── MODAL ÉDITEUR DE PROGRAMME ── */}
+      {editOpen&&editForfait&&(
+        <Modal open={editOpen} onClose={()=>setEditOpen(false)} title={editForfait.id.startsWith('c-')?'Nouveau programme':'Modifier le programme'} width={600}
+          footer={<><Btn variant="ghost" onClick={()=>setEditOpen(false)}>Annuler</Btn><Btn onClick={saveEdit}>Enregistrer</Btn></>}>
+          <div style={{display:'flex',flexDirection:'column',gap:14}}>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+              <Field label="Nom du programme"><FInput value={editForfait.nom} onChange={e=>setEditForfait(p=>({...p,nom:e.target.value}))} placeholder="ex : Force-Vitesse 6 semaines"/></Field>
+              <Field label="Niveau / public"><FInput value={editForfait.niveau} onChange={e=>setEditForfait(p=>({...p,niveau:e.target.value}))} placeholder="Débutant, Avancé…"/></Field>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
+              <Field label="Durée (semaines)"><FInput type="number" value={editForfait.semaines} onChange={e=>setEditForfait(p=>({...p,semaines:Number(e.target.value)}))} placeholder="8"/></Field>
+              <Field label="Séances/semaine"><FInput type="number" value={editForfait.joursParSem} onChange={e=>setEditForfait(p=>({...p,joursParSem:Number(e.target.value)}))} placeholder="4"/></Field>
+              <Field label="Prix (€)"><FInput type="number" value={editForfait.prix} onChange={e=>setEditForfait(p=>({...p,prix:Number(e.target.value)}))} placeholder="350"/></Field>
+            </div>
+            <Field label="Description courte">
+              <textarea value={editForfait.description} onChange={e=>setEditForfait(p=>({...p,description:e.target.value}))} rows={2} placeholder="Objectif principal du programme…" style={{padding:'8px 12px',border:'1px solid var(--n200)',borderRadius:'var(--rmd)',fontSize:13.5,resize:'vertical',fontFamily:'var(--fb)',outline:'none',lineHeight:1.5,width:'100%'}}/>
+            </Field>
+            <Field label="Objectifs (un par ligne)">
+              <textarea value={(editForfait.objectifs||[]).join('\n')} onChange={e=>setEditForfait(p=>({...p,objectifs:e.target.value.split('\n')}))} rows={3} placeholder="VO2max +10%&#10;Force +15%&#10;Prévention blessures" style={{padding:'8px 12px',border:'1px solid var(--n200)',borderRadius:'var(--rmd)',fontSize:13.5,resize:'vertical',fontFamily:'var(--fb)',outline:'none',lineHeight:1.5,width:'100%'}}/>
+            </Field>
+            <div>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+                <label style={{fontSize:13,fontWeight:600,color:'var(--n900)'}}>Séances du microcycle</label>
+                <Btn size="sm" variant="ghost" icon="plus" onClick={()=>setEditForfait(p=>({...p,microcycle:[...p.microcycle,{jour:(p.microcycle.length||0)+1,type:'force',titre:'',duree:1,rpe:7,contenu:''}]}))}>Ajouter</Btn>
+              </div>
+              {(editForfait.microcycle||[]).map((m,i)=>(
+                <div key={i} style={{display:'grid',gridTemplateColumns:'40px 80px 80px 80px 1fr 32px',gap:8,marginBottom:8,alignItems:'start'}}>
+                  <Field label={i===0?'Jour':''}><FInput type="number" value={m.jour} onChange={e=>setEditForfait(p=>{const mc=[...p.microcycle];mc[i]={...mc[i],jour:Number(e.target.value)};return{...p,microcycle:mc};})}/></Field>
+                  <Field label={i===0?'Type':''}>
+                    <FSel value={m.type} onChange={e=>setEditForfait(p=>{const mc=[...p.microcycle];mc[i]={...mc[i],type:e.target.value};return{...p,microcycle:mc};})}>
+                      {Object.entries(TYPES).map(([k,t])=><option key={k} value={k}>{t.label}</option>)}
+                    </FSel>
+                  </Field>
+                  <Field label={i===0?'Durée':''}><FInput type="number" value={m.duree} step="0.25" onChange={e=>setEditForfait(p=>{const mc=[...p.microcycle];mc[i]={...mc[i],duree:Number(e.target.value)};return{...p,microcycle:mc};})}/></Field>
+                  <Field label={i===0?'RPE':''}><FInput type="number" value={m.rpe} min="1" max="10" onChange={e=>setEditForfait(p=>{const mc=[...p.microcycle];mc[i]={...mc[i],rpe:Number(e.target.value)};return{...p,microcycle:mc};})}/></Field>
+                  <Field label={i===0?'Titre':''} style={{gridColumn:'5'}}>
+                    <FInput value={m.titre} onChange={e=>setEditForfait(p=>{const mc=[...p.microcycle];mc[i]={...mc[i],titre:e.target.value};return{...p,microcycle:mc};})} placeholder="Force — Bas du corps"/>
+                  </Field>
+                  <div style={{paddingTop:i===0?22:0}}>
+                    <button onClick={()=>setEditForfait(p=>({...p,microcycle:p.microcycle.filter((_,j)=>j!==i)}))} style={{border:'none',background:'transparent',cursor:'pointer',padding:4,borderRadius:'var(--rsm)'}}><Icon n="x" s={14} c="var(--n300)"/></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+/* ── APP ── */
+function App(){
+  const [screen,setScreen]=React.useState('home');
+  const [sess,setSess]=React.useState({open:false,prefill:null});
+  const [cliModal,setCliModal]=React.useState(false);
+  const openSess=(prefill=null)=>setSess({open:true,prefill});
+  const closeSess=()=>setSess({open:false,prefill:null});
+  return(
+    <StoreProvider>
+      <Shell screen={screen} setScreen={setScreen} onNewSession={openSess}>
+        {screen==='home'        &&<HomeScreen onNewClient={()=>setCliModal(true)} onNewSession={openSess}/>}
+        {screen==='calendar'    &&<CalendarScreen onNewSession={openSess}/>}
+        {screen==='clients'     &&<ClientsScreen onAdd={()=>setCliModal(true)}/>}
+        {screen==='performance' &&<PerformanceScreen/>}
+        {screen==='finances'    &&<FinancesScreen/>}
+        {screen==='programs'    &&<ProgramsScreen/>}
+        <SessionModal open={sess.open} onClose={closeSess} prefill={sess.prefill}/>
+        <ClientModal open={cliModal} onClose={()=>setCliModal(false)} editClient={null}/>
+      </Shell>
+    </StoreProvider>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
