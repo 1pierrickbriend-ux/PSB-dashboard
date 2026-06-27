@@ -536,7 +536,7 @@ function Shell({screen,setScreen,onNewSession,children}){
       <div style={{flex:1,display:'flex',flexDirection:'column',minWidth:0}}>
         <header style={{height:60,flexShrink:0,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 26px',borderBottom:'1px solid var(--n150)',background:'#fff'}}>
           <div>
-            <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:18,color:'var(--n900)',letterSpacing:'-.015em'}}>{META[screen]}</div>
+            <div style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:20,color:'var(--n900)',letterSpacing:'.005em'}}>{META[screen]}</div>
             <div style={{fontSize:12,color:'var(--n400)',marginTop:1,textTransform:'capitalize'}}>{today}</div>
           </div>
           <div style={{display:'flex',alignItems:'center',gap:10}}>
@@ -892,7 +892,7 @@ function CalendarScreen({onNewSession}){
             <Btn variant="secondary" size="sm" onClick={()=>setWeekOffset(w=>w-1)} icon="chevron-left"/>
             <Btn variant="secondary" size="sm" onClick={()=>setWeekOffset(w=>w+1)} icon="chevron-right"/>
           </div>
-          <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:17,color:'var(--n900)',letterSpacing:'-.015em'}}>{weekLabel}</div>
+          <div style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:19,color:'var(--n900)',letterSpacing:'.005em'}}>{weekLabel}</div>
           {weekOffset!==0&&<Btn variant="ghost" size="sm" onClick={()=>setWeekOffset(0)}>Aujourd'hui</Btn>}
         </div>
         <div style={{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
@@ -1077,7 +1077,7 @@ function ClientsScreen({onAdd}){
                 <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
                   <Avatar name={c.name} size={48} status="online"/>
                   <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:16,color:'var(--n900)',letterSpacing:'-.01em',marginBottom:2}}>{c.name}</div>
+                    <div style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:18,color:'var(--n900)',letterSpacing:'.005em',marginBottom:2}}>{c.name}</div>
                     <div style={{fontSize:12.5,color:'var(--n500)'}}>{c.sport||'—'}</div>
                     {c.goal&&<div style={{fontSize:12,color:'var(--n400)',marginTop:1}}>{c.goal}</div>}
                   </div>
@@ -1128,7 +1128,7 @@ function MatrixView(){
           <Btn variant="secondary" size="sm" onClick={()=>setWeeks(w=>w-1)} icon="chevron-left"/>
           <Btn variant="secondary" size="sm" onClick={()=>setWeeks(w=>w+1)} icon="chevron-right"/>
         </div>
-        <span style={{fontFamily:'var(--fd)',fontWeight:700,fontSize:16,color:'var(--n900)',letterSpacing:'-.015em'}}>
+        <span style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:18,color:'var(--n900)',letterSpacing:'.005em'}}>
           {week[0].getDate()} {week[0].toLocaleDateString('fr-FR',{month:'short'})} – {week[6].getDate()} {week[6].toLocaleDateString('fr-FR',{month:'short',year:'numeric'})}
         </span>
         {weeks!==0&&<Btn variant="ghost" size="sm" onClick={()=>setWeeks(0)}>Aujourd'hui</Btn>}
@@ -1915,7 +1915,7 @@ function ProgramsScreen(){
             {allForfaits.map(f=>(
               <div key={f.id} style={{background:'#fff',border:`2px solid var(--n150)`,borderRadius:'var(--rxl)',padding:20,boxShadow:'var(--sh-sm)',display:'flex',flexDirection:'column',gap:10}}>
                 <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
-                  <span style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:15,color:f.couleur||'var(--v)',lineHeight:1.2}}>{f.nom}</span>
+                  <span style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:17,color:f.couleur||'var(--v)',lineHeight:1.15}}>{f.nom}</span>
                   <div style={{display:'flex',gap:6,flexShrink:0}}>
                     {customForfaits.find(c=>c.id===f.id)&&(
                       <>
@@ -1945,7 +1945,7 @@ function ProgramsScreen(){
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
             <div style={{display:'flex',alignItems:'center',gap:12}}>
               <button onClick={()=>setStep(1)} style={{border:'none',background:'transparent',cursor:'pointer',display:'flex',alignItems:'center',gap:6,fontSize:13,color:'var(--n500)',fontFamily:'var(--fb)'}}><Icon n="arrow-left" s={16} c="var(--n400)"/>Retour</button>
-              <div style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:19,color:forfait.couleur||'var(--v)'}}>{forfait.nom}</div>
+              <div style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:22,color:forfait.couleur||'var(--v)'}}>{forfait.nom}</div>
             </div>
             {customForfaits.find(c=>c.id===forfait.id)&&<Btn size="sm" variant="secondary" icon="pencil" onClick={()=>openEdit(forfait)}>Modifier</Btn>}
           </div>
