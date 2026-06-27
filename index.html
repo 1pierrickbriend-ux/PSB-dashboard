@@ -430,7 +430,10 @@ function ExportReminder({dataCount}){
 }
 
 function Shell({screen,setScreen,onNewSession,children}){
-  const {state,drive}=useStore();
+  const {state,drive,updateSettings}=useStore();
+  const [settingsOpen,setSettingsOpen]=React.useState(false);
+  const [coachNameDraft,setCoachNameDraft]=React.useState(state.settings?.coachName||'');
+  const [objectifDraft,setObjectifDraft]=React.useState(state.settings?.objectifMensuel||0);
   const today=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const todayStr=new Date().toISOString().slice(0,10);
   const todaySessions=state.sessions.filter(s=>s.date===todayStr);
@@ -438,13 +441,14 @@ function Shell({screen,setScreen,onNewSession,children}){
   return(
     <div style={{display:'flex',height:'100%'}}>
       <aside style={{width:248,flexShrink:0,background:'var(--ink)',display:'flex',flexDirection:'column',padding:'18px 14px',height:'100%',boxSizing:'border-box'}}>
-        <div style={{display:'flex',alignItems:'center',gap:10,padding:'4px 8px 20px'}}>
-          <div style={{width:36,height:36,borderRadius:9,background:'var(--v)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:'0 2px 8px rgba(84,58,134,.4)'}}>
-            <span style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:15,color:'#fff',letterSpacing:'-.06em'}}>PSB</span>
+        <div style={{display:'flex',alignItems:'center',gap:10,padding:'4px 8px 18px'}}>
+          <div style={{width:36,height:36,borderRadius:9,background:'var(--v)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:'0 2px 8px rgba(46,31,82,.4)'}}>
+            <span style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:17,color:'#fff',letterSpacing:'.01em'}}>PSB</span>
           </div>
           <div>
-            <div style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:13.5,color:'#fff',letterSpacing:'-.02em'}}>PSB</div>
-            <div style={{fontSize:10.5,color:'var(--inkl)',letterSpacing:'.04em'}}>Préparation physique</div>
+            <div style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:16,color:'#fff',letterSpacing:'.01em',lineHeight:1}}>PSB</div>
+            <div style={{fontSize:10,color:'var(--inkl)',letterSpacing:'.04em',marginTop:1}}>Préparation physique</div>
+            <div style={{fontSize:9,color:'var(--vlight,#9A7FD4)',letterSpacing:'.08em',marginTop:2,textTransform:'uppercase',fontWeight:600}}>Précis, solide, bâti</div>
           </div>
         </div>
         <button onClick={onNewSession} style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,width:'100%',height:38,border:'none',borderRadius:'var(--rmd)',background:'var(--v)',color:'#fff',fontFamily:'var(--fb)',fontSize:13.5,fontWeight:600,boxShadow:'0 2px 10px rgba(84,58,134,.45)',marginBottom:18,cursor:'pointer'}}>
@@ -470,12 +474,12 @@ function Shell({screen,setScreen,onNewSession,children}){
         </div>
         <div style={{marginTop:'auto',display:'flex',flexDirection:'column',gap:8,padding:'10px 6px 0'}}>
           <div style={{display:'flex',alignItems:'center',gap:10}}>
-            <Avatar name="Pierrick Briend" size={32} status="online"/>
+            <Avatar name={state.settings?.coachName||'Coach'} size={32} status="online"/>
             <div style={{flex:1,minWidth:0}}>
-              <div style={{fontSize:13,fontWeight:600,color:'#e8e4f2',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>Pierrick Briend</div>
+              <div style={{fontSize:13,fontWeight:600,color:'#e8e4f2',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{state.settings?.coachName||'Coach'}</div>
               <div style={{fontSize:11,color:'var(--inkl)'}}>Coach</div>
             </div>
-            <button style={{border:'none',background:'transparent',padding:4,borderRadius:'var(--rsm)'}}><Icon n="settings" s={16} c="var(--inkl)"/></button>
+            <button onClick={()=>{setCoachNameDraft(state.settings?.coachName||'');setObjectifDraft(state.settings?.objectifMensuel||0);setSettingsOpen(true);}} title="Paramètres" style={{border:'none',background:'transparent',padding:4,borderRadius:'var(--rsm)',cursor:'pointer'}}><Icon n="settings" s={16} c="var(--inkl)"/></button>
           </div>
           <button
             onClick={drive.driveStatus==='connected'||drive.driveStatus==='syncing'?drive.disconnect:drive.connect}
@@ -547,6 +551,40 @@ function Shell({screen,setScreen,onNewSession,children}){
           {children}
         </main>
       </div>
+      <Modal open={settingsOpen} onClose={()=>setSettingsOpen(false)} title="Paramètres" width={460}
+        footer={<>
+          <Btn variant="ghost" onClick={()=>setSettingsOpen(false)}>Annuler</Btn>
+          <Btn onClick={()=>{updateSettings({coachName:coachNameDraft,objectifMensuel:Number(objectifDraft)||0});setSettingsOpen(false);}}>Enregistrer</Btn>
+        </>}>
+        <div style={{display:'flex',flexDirection:'column',gap:18}}>
+          <div>
+            <div style={{fontSize:11,fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--n400)',marginBottom:10}}>Profil</div>
+            <Field label="Nom du coach"><FInput value={coachNameDraft} onChange={e=>setCoachNameDraft(e.target.value)} placeholder="Votre nom"/></Field>
+            <div style={{marginTop:10}}>
+              <Field label="Objectif mensuel (€)"><FInput type="number" value={objectifDraft} onChange={e=>setObjectifDraft(e.target.value)} placeholder="4600"/></Field>
+            </div>
+          </div>
+          <div style={{borderTop:'1px solid var(--n150)',paddingTop:16}}>
+            <div style={{fontSize:11,fontWeight:700,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--n400)',marginBottom:10}}>Données</div>
+            <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',background:'var(--n50)',borderRadius:'var(--rmd)',marginBottom:8}}>
+              <span style={{width:7,height:7,borderRadius:'50%',flexShrink:0,background:drive.driveStatus==='connected'?'#16a34a':drive.driveStatus==='error'?'#e25555':'var(--n400)'}}/>
+              <span style={{fontSize:13,color:'var(--n700)',flex:1}}>
+                {drive.driveStatus==='connected'?'Google Drive connecté':drive.driveStatus==='syncing'?'Synchronisation…':'Google Drive non connecté'}
+              </span>
+              <Btn size="sm" variant="secondary" onClick={drive.driveStatus==='connected'?drive.disconnect:drive.connect}>
+                {drive.driveStatus==='connected'?'Déconnecter':'Connecter'}
+              </Btn>
+            </div>
+            <div style={{fontSize:12,color:'var(--n400)'}}>Export et import JSON disponibles en bas de la barre latérale.</div>
+          </div>
+          <div style={{borderTop:'1px solid var(--n150)',paddingTop:16,display:'flex',alignItems:'center',gap:10}}>
+            <div style={{width:32,height:32,borderRadius:8,background:'var(--v)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+              <span style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:14,color:'#fff'}}>PSB</span>
+            </div>
+            <div style={{fontSize:11,color:'var(--n400)',letterSpacing:'.04em',textTransform:'uppercase'}}>Précis, solide, bâti</div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -748,9 +786,11 @@ function HomeScreen({onNewClient,onNewSession}){
     return(
       <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',minHeight:'70vh'}}>
         <div style={{textAlign:'center',maxWidth:500}}>
-          <div style={{width:72,height:72,borderRadius:20,background:'var(--vs)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 20px'}}><Icon n="dumbbell" s={34} c="var(--v)"/></div>
-          <div style={{fontFamily:'var(--fbebas)',fontWeight:800,fontSize:28,color:'var(--n900)',letterSpacing:'-.025em',marginBottom:10}}>Bienvenue sur votre espace</div>
-          <div style={{fontSize:15.5,color:'var(--n500)',lineHeight:1.6,marginBottom:28}}>Commencez par ajouter vos athlètes, puis planifiez leurs séances. Toutes vos données sont sauvegardées automatiquement dans ce navigateur.</div>
+          <div style={{width:72,height:72,borderRadius:20,background:'var(--vs)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 20px'}}>
+            <span style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:26,color:'var(--v)',letterSpacing:'.01em'}}>PSB</span>
+          </div>
+          <div style={{fontFamily:'var(--fbebas)',fontWeight:400,fontSize:30,color:'var(--n900)',letterSpacing:'.005em',marginBottom:10}}>Aucun athlète suivi.</div>
+          <div style={{fontSize:15.5,color:'var(--n500)',lineHeight:1.6,marginBottom:28}}>Ajoutez un athlète, planifiez une séance. Le suivi commence là.</div>
           <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
             <Btn onClick={onNewClient} icon="user-plus" size="lg">Ajouter un athlète</Btn>
             <Btn variant="secondary" onClick={()=>onNewSession()} icon="calendar-plus" size="lg">Créer une séance</Btn>
@@ -1187,8 +1227,9 @@ function AthleteReport({client,sessions,tarifs}){
           <div style={{fontSize:14,color:'#6b7482',marginTop:3}}>Période : {month}</div>
         </div>
         <div style={{textAlign:'right'}}>
-          <div style={{fontFamily:'Sora, sans-serif',fontWeight:800,fontSize:16,color:'#131017'}}>PSB</div>
+          <div style={{fontFamily:'Bebas Neue, sans-serif',fontWeight:400,fontSize:19,color:'#131017',letterSpacing:'.01em'}}>PSB</div>
           <div style={{fontSize:12,color:'#6b7482'}}>Préparation Physique</div>
+          <div style={{fontSize:9.5,color:'#9A7FD4',letterSpacing:'.07em',textTransform:'uppercase',fontWeight:700,marginTop:2}}>Précis, solide, bâti</div>
         </div>
       </div>
       <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:24}}>
@@ -1587,6 +1628,25 @@ function FinancesScreen(){
           return <Kpi label={`Revenu projeté — ${now.toLocaleDateString('fr-FR',{month:'long'})}`} val={fmt(projMois)} icon="target" accent="var(--teal)" delta={`${sessCount} séance${sessCount>1?'s':''} planifiée${sessCount>1?'s':''}`} up/>;
         })()}
       </div>
+      {(()=>{
+        const now=new Date();
+        const ym=now.toISOString().slice(0,7);
+        const projMois=state.paiements.filter(p=>p.date&&p.date.startsWith(ym)).reduce((a,p)=>a+Number(p.montant||0),0);
+        const objectif=Number(state.settings?.objectifMensuel||0);
+        if(!objectif)return null;
+        const pct=Math.min(100,Math.round((projMois/objectif)*100));
+        return(
+          <div style={{padding:'16px 18px',background:'#fff',border:'1px solid var(--n150)',borderRadius:'var(--rlg)',boxShadow:'var(--sh-sm)'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:10}}>
+              <div style={{fontSize:13,fontWeight:600,color:'var(--n700)'}}>Objectif du mois</div>
+              <div style={{fontFamily:'var(--fm)',fontSize:13,color:'var(--n500)'}}>{fmt(projMois)} <span style={{color:'var(--n400)'}}>/ {fmt(objectif)}</span></div>
+            </div>
+            <div style={{height:8,borderRadius:99,background:'var(--n100)',overflow:'hidden'}}>
+              <div style={{height:'100%',width:pct+'%',borderRadius:99,background:pct>=100?'var(--green)':'var(--v)',transition:'width 300ms ease'}}/>
+            </div>
+          </div>
+        );
+      })()}
       <div style={{display:'flex',gap:4,borderBottom:'1px solid var(--n150)'}}>
         {[['tarifs','Mes tarifs'],['paiements','Paiements'],['outils','Outils']].map(([k,l])=>(
           <button key={k} onClick={()=>setTab(k)} style={{position:'relative',padding:'10px 14px',border:'none',background:'transparent',cursor:'pointer',fontFamily:'var(--fb)',fontSize:14,fontWeight:tab===k?600:500,color:tab===k?'var(--n900)':'var(--n500)',transition:'var(--tr)'}}>
