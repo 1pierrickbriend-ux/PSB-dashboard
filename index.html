@@ -3,13 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pierrick Briend — Préparation Physique</title>
+<title>PSB — Préparation Physique</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js"></script>
 <style>
 :root{
   --v:#2E1F52;--vh:#241a40;--vs:#f3f0fa;--v100:#e4ddf2;--v700:#221638;
@@ -80,12 +82,163 @@ const LS='pb-prep-v2';
 function loadState(){try{const s=localStorage.getItem(LS);if(s){const p=JSON.parse(s);if(!p.tests)p.tests=[];return p;}}catch(e){}return{clients:[],sessions:[],paiements:[],tarifs:DEFAULT_TARIFS,tests:[],settings:{coachName:'Pierrick Briend',objectifMensuel:4600}};}
 function saveState(s){try{localStorage.setItem(LS,JSON.stringify(s));}catch(e){}}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+
+/* ── GOOGLE DRIVE SYNC ──
+   Le localStorage reste la source de vérité rapide et hors-ligne.
+   Drive sert de sauvegarde miroir + synchronisation entre appareils.
+   Fichier unique sur Drive : "psb-prep-data.json" (espace appDataFolder, invisible
+   dans le Drive normal de l'utilisateur, pour ne jamais polluer son arborescence). */
+const DRIVE_CLIENT_ID='457374538480-rnva94oftum6mge56cbmv0ouf0252gqs.apps.googleusercontent.com';
+const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILENAME='psb-prep-data.json';
+const LS_DRIVE_META='pb-drive-meta'; // {fileId, lastSync}
+
+function loadDriveMeta(){try{return JSON.parse(localStorage.getItem(LS_DRIVE_META)||'{}');}catch{return{};}}
+function saveDriveMeta(m){try{localStorage.setItem(LS_DRIVE_META,JSON.stringify(m));}catch(e){}}
+
+function useDriveSync(state,setState){
+  const [driveStatus,setDriveStatus]=React.useState('disconnected'); // disconnected | connecting | connected | syncing | error
+  const [driveError,setDriveError]=React.useState(null);
+  const [lastSync,setLastSync]=React.useState(loadDriveMeta().lastSync||null);
+  const tokenClientRef=React.useRef(null);
+  const accessTokenRef=React.useRef(null);
+  const gapiReadyRef=React.useRef(false);
+
+  // Initialise le client gapi (une seule fois)
+  const ensureGapi=React.useCallback(()=>{
+    return new Promise((resolve,reject)=>{
+      if(gapiReadyRef.current){resolve();return;}
+      if(typeof gapi==='undefined'){reject(new Error('Google API non chargée'));return;}
+      gapi.load('client',async()=>{
+        try{
+          await gapi.client.init({});
+          await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
+          gapiReadyRef.current=true;
+          resolve();
+        }catch(e){reject(e);}
+      });
+    });
+  },[]);
+
+  const connect=React.useCallback(()=>{
+    if(typeof google==='undefined'){setDriveError('Google Identity non chargée');setDriveStatus('error');return;}
+    setDriveStatus('connecting');
+    if(!tokenClientRef.current){
+      tokenClientRef.current=google.accounts.oauth2.initTokenClient({
+        client_id:DRIVE_CLIENT_ID,
+        scope:DRIVE_SCOPE,
+        callback:async(resp)=>{
+          if(resp.error){setDriveError(resp.error);setDriveStatus('error');return;}
+          accessTokenRef.current=resp.access_token;
+          try{
+            await ensureGapi();
+            gapi.client.setToken({access_token:resp.access_token});
+            setDriveStatus('connected');
+            await pullFromDrive();
+          }catch(e){setDriveError(e.message||'Erreur de connexion');setDriveStatus('error');}
+        }
+      });
+    }
+    tokenClientRef.current.requestAccessToken();
+  },[ensureGapi]);
+
+  const findOrCreateFile=React.useCallback(async()=>{
+    const meta=loadDriveMeta();
+    if(meta.fileId){
+      try{
+        await gapi.client.drive.files.get({fileId:meta.fileId,fields:'id'});
+        return meta.fileId;
+      }catch(e){/* fichier introuvable, on en recrée un */}
+    }
+    const res=await gapi.client.drive.files.list({
+      spaces:'appDataFolder',
+      q:`name='${DRIVE_FILENAME}'`,
+      fields:'files(id,name)'
+    });
+    if(res.result.files&&res.result.files.length>0){
+      const fileId=res.result.files[0].id;
+      saveDriveMeta({...meta,fileId});
+      return fileId;
+    }
+    const createRes=await gapi.client.drive.files.create({
+      resource:{name:DRIVE_FILENAME,parents:['appDataFolder']},
+      fields:'id'
+    });
+    const fileId=createRes.result.id;
+    saveDriveMeta({...meta,fileId});
+    return fileId;
+  },[]);
+
+  const pushToDrive=React.useCallback(async(s)=>{
+    if(driveStatus!=='connected'&&driveStatus!=='syncing')return;
+    try{
+      setDriveStatus('syncing');
+      const fileId=await findOrCreateFile();
+      const payload=JSON.stringify({data:s,savedAt:new Date().toISOString()});
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,{
+        method:'PATCH',
+        headers:{'Authorization':'Bearer '+accessTokenRef.current,'Content-Type':'application/json'},
+        body:payload
+      });
+      const now=new Date().toISOString();
+      saveDriveMeta({...loadDriveMeta(),lastSync:now});
+      setLastSync(now);
+      setDriveStatus('connected');
+    }catch(e){setDriveError(e.message||'Erreur de synchronisation');setDriveStatus('error');}
+  },[driveStatus,findOrCreateFile]);
+
+  const pullFromDrive=React.useCallback(async()=>{
+    try{
+      const fileId=await findOrCreateFile();
+      const res=await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,{
+        headers:{'Authorization':'Bearer '+accessTokenRef.current}
+      });
+      if(!res.ok){if(res.status===404){return;} throw new Error('Lecture Drive échouée');}
+      const text=await res.text();
+      if(!text)return; // fichier vide, rien à récupérer
+      const parsed=JSON.parse(text);
+      if(parsed&&parsed.data){
+        const localRaw=localStorage.getItem(LS);
+        const localState=localRaw?JSON.parse(localRaw):null;
+        // Ne propose le remplacement que si Drive contient des données ET que le local est vide ou plus ancien
+        if(!localState||!localState.clients||localState.clients.length===0){
+          setState(parsed.data);
+          saveState(parsed.data);
+        }
+        const now=new Date().toISOString();
+        saveDriveMeta({...loadDriveMeta(),lastSync:now});
+        setLastSync(now);
+      }
+    }catch(e){setDriveError(e.message||'Erreur de lecture Drive');}
+  },[findOrCreateFile,setState]);
+
+  const disconnect=React.useCallback(()=>{
+    if(accessTokenRef.current&&typeof google!=='undefined'){
+      google.accounts.oauth2.revoke(accessTokenRef.current,()=>{});
+    }
+    accessTokenRef.current=null;
+    setDriveStatus('disconnected');
+  },[]);
+
+  return{driveStatus,driveError,lastSync,connect,disconnect,pushToDrive};
+}
+
 const StoreCtx=React.createContext(null);
 function StoreProvider({children}){
   const [state,setState]=React.useState(()=>loadState());
-  const update=React.useCallback(fn=>setState(s=>{const nx=fn(s);saveState(nx);return nx;}),[]);
+  const drive=useDriveSync(state,setState);
+  const pushTimerRef=React.useRef(null);
+  const update=React.useCallback(fn=>setState(s=>{
+    const nx=fn(s);
+    saveState(nx);
+    // Synchro Drive différée (debounce 2s) pour ne pas spammer l'API à chaque frappe
+    clearTimeout(pushTimerRef.current);
+    pushTimerRef.current=setTimeout(()=>drive.pushToDrive(nx),2000);
+    return nx;
+  }),[drive]);
   const store=React.useMemo(()=>({
     state,
+    drive,
     addClient:c=>update(s=>({...s,clients:[...s.clients,{...c,id:uid(),createdAt:new Date().toISOString()}]})),
     updateClient:(id,c)=>update(s=>({...s,clients:s.clients.map(x=>x.id===id?{...x,...c}:x)})),
     deleteClient:id=>update(s=>({...s,clients:s.clients.filter(x=>x.id!==id)})),
@@ -109,7 +262,7 @@ function StoreProvider({children}){
     updateSettings:settings=>update(s=>({...s,settings:{...s.settings,...settings}})),
     addTest:t=>update(s=>({...s,tests:[...(s.tests||[]),{...t,id:uid(),createdAt:new Date().toISOString()}]})),
     deleteTest:id=>update(s=>({...s,tests:(s.tests||[]).filter(x=>x.id!==id)})),
-  }),[state,update]);
+  }),[state,update,drive]);
   return <StoreCtx.Provider value={store}>{children}</StoreCtx.Provider>;
 }
 function useStore(){return React.useContext(StoreCtx);}
@@ -277,7 +430,7 @@ function ExportReminder({dataCount}){
 }
 
 function Shell({screen,setScreen,onNewSession,children}){
-  const {state}=useStore();
+  const {state,drive}=useStore();
   const today=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   const todayStr=new Date().toISOString().slice(0,10);
   const todaySessions=state.sessions.filter(s=>s.date===todayStr);
@@ -290,7 +443,7 @@ function Shell({screen,setScreen,onNewSession,children}){
             <span style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:15,color:'#fff',letterSpacing:'-.06em'}}>PSB</span>
           </div>
           <div>
-            <div style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:13.5,color:'#fff',letterSpacing:'-.02em'}}>Pierrick Briend</div>
+            <div style={{fontFamily:'var(--fd)',fontWeight:800,fontSize:13.5,color:'#fff',letterSpacing:'-.02em'}}>PSB</div>
             <div style={{fontSize:10.5,color:'var(--inkl)',letterSpacing:'.04em'}}>Préparation physique</div>
           </div>
         </div>
@@ -324,6 +477,27 @@ function Shell({screen,setScreen,onNewSession,children}){
             </div>
             <button style={{border:'none',background:'transparent',padding:4,borderRadius:'var(--rsm)'}}><Icon n="settings" s={16} c="var(--inkl)"/></button>
           </div>
+          <button
+            onClick={drive.driveStatus==='connected'||drive.driveStatus==='syncing'?drive.disconnect:drive.connect}
+            title={drive.driveStatus==='connected'?'Connecté — cliquer pour déconnecter':'Connecter Google Drive pour sauvegarder vos données'}
+            style={{
+              display:'flex',alignItems:'center',gap:8,padding:'8px 10px',borderRadius:'var(--rsm)',
+              border:'1px solid '+(drive.driveStatus==='connected'?'rgba(58,201,120,.35)':'rgba(255,255,255,.12)'),
+              background:drive.driveStatus==='connected'?'rgba(58,201,120,.08)':'rgba(255,255,255,.04)',
+              cursor:'pointer',width:'100%',textAlign:'left'
+            }}>
+            <span style={{
+              width:7,height:7,borderRadius:'50%',flexShrink:0,
+              background:drive.driveStatus==='connected'?'#3ac978':drive.driveStatus==='syncing'?'#e0a90b':drive.driveStatus==='error'?'#e25555':'var(--inks)'
+            }}/>
+            <span style={{fontSize:11.5,color:'#cfc9de',flex:1,minWidth:0,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
+              {drive.driveStatus==='connected'&&'Drive connecté'}
+              {drive.driveStatus==='syncing'&&'Synchronisation…'}
+              {drive.driveStatus==='connecting'&&'Connexion…'}
+              {drive.driveStatus==='error'&&'Erreur Drive'}
+              {drive.driveStatus==='disconnected'&&'Connecter Google Drive'}
+            </span>
+          </button>
           <div style={{display:'flex',gap:6}}>
             <button title="Exporter les données" onClick={()=>{
               const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
@@ -1013,7 +1187,7 @@ function AthleteReport({client,sessions,tarifs}){
           <div style={{fontSize:14,color:'#6b7482',marginTop:3}}>Période : {month}</div>
         </div>
         <div style={{textAlign:'right'}}>
-          <div style={{fontFamily:'Sora, sans-serif',fontWeight:800,fontSize:16,color:'#131017'}}>Pierrick Briend</div>
+          <div style={{fontFamily:'Sora, sans-serif',fontWeight:800,fontSize:16,color:'#131017'}}>PSB</div>
           <div style={{fontSize:12,color:'#6b7482'}}>Préparation Physique</div>
         </div>
       </div>
@@ -1068,7 +1242,7 @@ function AthleteReport({client,sessions,tarifs}){
       )}
       <div style={{marginTop:24,paddingTop:14,borderTop:'1px solid #eef1f5',fontSize:11,color:'#939cab',display:'flex',justifyContent:'space-between'}}>
         <span>Généré le {new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</span>
-        <span>Pierrick Briend · Préparation Physique</span>
+        <span>PSB · Préparation Physique</span>
       </div>
     </div>
   );
